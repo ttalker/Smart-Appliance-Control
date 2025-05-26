@@ -14,7 +14,7 @@ public class Main {
         }
 
         // Create and show your main window
-        MainWindow window = new MainWindow();
-        window.setVisible(true);
+        LoginForm login = new LoginForm();
+        login.setVisible(true);
   }
 }
