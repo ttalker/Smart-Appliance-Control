@@ -1,11 +1,12 @@
 package mainapp;
 
+import javax.swing.SwingUtilities;
+
 public class Main {
-  public static void main(String[] args) {
-    System.out.println("some changes");
- 
-    MainWindow window = new MainWindow();
-    window.setVisible(true);
-      
-  }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            MainWindow window = new MainWindow();
+            window.setVisible(true);
+        });
+    }
 }

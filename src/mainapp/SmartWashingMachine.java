@@ -10,6 +10,7 @@ public class SmartWashingMachine extends SmartAppliance implements WashCycleCont
         this.waterUsage = 0;
     }
 
+    @Override
     public void startCycle(String mode) {
         if (!isOn()) {
             turnOn();
@@ -19,22 +20,32 @@ public class SmartWashingMachine extends SmartAppliance implements WashCycleCont
         waterUsage = mode.equalsIgnoreCase("Heavy") ? 100 : 50;
     }
 
+    @Override
     public void stopCycle() {
         cycleStatus = "Finished";
         turnOff();
     }
 
+    @Override
     public String getCycleStatus() {
         return cycleStatus;
     }
 
+    @Override
     public int getWaterUsage() {
         return waterUsage;
     }
 
     @Override
+    protected double calculateEnergyConsumption() {
+        // Example: 500W base, +200W for "Heavy" mode
+        return 500.0 + ("Heavy".equalsIgnoreCase(getMode()) ? 200.0 : 0.0);
+    }
+
+    @Override
     public void displayStatus() {
         System.out.println(getName() + " | Status: " + cycleStatus +
-                " | Water: " + waterUsage + "L | Mode: " + getMode());
+                " | Water: " + waterUsage + "L | Mode: " + getMode() +
+                " | Energy: " + getEnergyConsumption() + "W");
     }
 }
