@@ -48,25 +48,33 @@ public class LoginForm extends JFrame{
 
 
         add(panel);
-        
-        // login button 
+
+        // login button action listener
         loginButton.addActionListener(e -> {
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword());
             
-            LoginInfo currentUser = new LoginInfo(user, pass)
+            LoginInfo currentUser = new LoginInfo(user, pass);
             
             if (currentUser.validateLogin(user,pass)) {
-                
+                JOptionPane.showMessageDialog(panel, "Logged in successfully...");
+                // call the mainwindow
+                SwingUtilities.invokeLater(() -> {
+                MainWindow window = new MainWindow();
+                window.setVisible(true);
+                });
+
             }
-
-
+            else{
+                JOptionPane.showMessageDialog(panel, "username or password is incorrect!");
+            }
         });
         
-        // sign up button
+        // sign up button action listener
          signupButton.addActionListener(e -> {
-
-            
+            SignupForm sign = new SignupForm();
+            dispose();
+            sign.setVisible(true);
         });
     }
 }
