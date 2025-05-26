@@ -1,3 +1,7 @@
 {
-    "java.project.sourcePaths": ["src"]
+    "java.project.sourcePaths": ["src"],
+    "java.project.referencedLibraries": [
+    "lib/flatlaf-3.6.jar",
+    "lib/flatlaf-intellij-themes-3.6.jar"
+  ]
 }
