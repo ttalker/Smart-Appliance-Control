@@ -7,6 +7,7 @@ public class MainWindow extends JFrame {
     private ApplianceManager manager;
 
     public MainWindow() {
+
         setTitle("Smart Home Control");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -159,4 +160,5 @@ public class MainWindow extends JFrame {
         }
         return sb.toString();
     }
+}
 }
