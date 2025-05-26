@@ -12,9 +12,15 @@ public class Main {
             System.err.println("Failed to initialize FlatLaf theme");
             e.printStackTrace();
         }
-
+        // call the mainwindow
+        SwingUtilities.invokeLater(() -> {
+            MainWindow window = new MainWindow();
+            window.setVisible(true);
+        });
+    
         // Create and show your main window
         LoginForm login = new LoginForm();
         login.setVisible(true);
   }
+
 }
