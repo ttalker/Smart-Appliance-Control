@@ -2,8 +2,9 @@ package mainapp;
 import java.awt.*;
 import javax.swing.*;
 
-public class MainWindow extends JFrame {
 
+public class MainWindow extends JFrame {
+    
     public MainWindow() {
         setTitle("Main Window");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
