@@ -15,12 +15,27 @@ public class SmartRefrigerator extends SmartAppliance implements TemperatureCont
         this.foodInventory = new ArrayList<>();
     }
 
+    @Override
     public void setTemperature(int temp) {
         this.temperature = temp;
+        updateEnergyConsumption();
     }
 
-    public void toggleEnergySavingMode() {
-        this.energySavingMode = !energySavingMode;
+    @Override
+    public void enableEnergySavingMode() {
+        this.energySavingMode = true;
+        updateEnergyConsumption();
+    }
+
+    @Override
+    public void disableEnergySavingMode() {
+        this.energySavingMode = false;
+        updateEnergyConsumption();
+    }
+
+    @Override
+    public boolean isEnergySavingMode() {
+        return energySavingMode;
     }
 
     @Override
@@ -35,28 +50,28 @@ public class SmartRefrigerator extends SmartAppliance implements TemperatureCont
 
     @Override
     public List<String> getInventory() {
-        return new ArrayList<>(foodInventory); // Return a copy
+        return new ArrayList<>(foodInventory);
     }
 
     @Override
-    public void enableEnergySavingMode() {
-        this.energySavingMode = true;
-    }
-
-    @Override
-    public void disableEnergySavingMode() {
-        this.energySavingMode = false;
-    }
-
-    @Override
-    public boolean isEnergySavingMode() {
-        return energySavingMode;
+    protected double calculateEnergyConsumption() {
+        // Example: 150W base, +20W per degree below 4°C, -50W if energy saving
+        double base = 150.0;
+        double tempFactor = (4 - temperature) * 20.0;
+        double energySavingFactor = energySavingMode ? -50.0 : 0.0;
+        return base + tempFactor + energySavingFactor;
     }
 
     @Override
     public void displayStatus() {
         System.out.println(getName() + " is " + (isOn() ? "On" : "Off") +
-                " | Temp: " + temperature + "°C | Energy Saving: " + (energySavingMode ? "Enabled" : "Disabled"));
+                " | Temp: " + temperature + "°C | Energy Saving: " + (energySavingMode ? "Enabled" : "Disabled") +
+                " | Energy: " + getEnergyConsumption() + "W");
         System.out.println("Inventory: " + foodInventory);
+    }
+
+    // Getter for temperature (for GUI)
+    public int getTemperature() {
+        return temperature;
     }
 }
