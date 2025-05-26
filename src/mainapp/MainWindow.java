@@ -72,14 +72,14 @@ public class MainWindow extends JFrame {
             applianceRow.add(statusLabel);
             applianceRow.add(toggleButton);
 
-            if (appliance instanceof TemperatureControl) {
+            if (appliance instanceof TemperatureControl temperatureControl) {
                 JTextField tempField = new JTextField("24", 4);
                 JButton setTempButton = new JButton("Set Temp");
                 setTempButton.addActionListener(e -> {
                     try {
                         int temp = Integer.parseInt(tempField.getText());
                         if (temp >= -10 && temp <= 40) {
-                            ((TemperatureControl) appliance).setTemperature(temp);
+                            temperatureControl.setTemperature(temp);
                             statusLabel.setText(getStatusText(appliance));
                         } else {
                             JOptionPane.showMessageDialog(this, "Temperature must be between -10 and 40°C");
@@ -91,14 +91,14 @@ public class MainWindow extends JFrame {
                 applianceRow.add(tempField);
                 applianceRow.add(setTempButton);
             }
-            if (appliance instanceof AdjustableLight) {
+            if (appliance instanceof AdjustableLight adjustableLight) {
                 JTextField brightnessField = new JTextField("50", 4);
                 JButton setBrightnessButton = new JButton("Set Brightness");
                 setBrightnessButton.addActionListener(e -> {
                     try {
                         int brightness = Integer.parseInt(brightnessField.getText());
                         if (brightness >= 0 && brightness <= 100) {
-                            ((AdjustableLight) appliance).setBrightness(brightness);
+                            adjustableLight.setBrightness(brightness);
                             statusLabel.setText(getStatusText(appliance));
                         } else {
                             JOptionPane.showMessageDialog(this, "Brightness must be between 0 and 100");
@@ -118,44 +118,36 @@ public class MainWindow extends JFrame {
 
     private String getStatusText(SmartAppliance appliance) {
         StringBuilder sb = new StringBuilder(appliance.getName() + ": ");
-        if (appliance instanceof SmartAC ac) {
-            sb.append(ac.isOn() ? "On" : "Off")
+        switch (appliance) {
+            case SmartAC ac -> sb.append(ac.isOn() ? "On" : "Off")
                     .append(" | Temp: ").append(ac.getTemperature()).append("°C")
                     .append(" | Mode: ").append(ac.getMode())
                     .append(" | Energy: ").append(String.format("%.1f", ac.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartLight light) {
-            sb.append(light.isOn() ? "On" : "Off")
+            case SmartLight light -> sb.append(light.isOn() ? "On" : "Off")
                     .append(" | Brightness: ").append(light.getBrightness())
                     .append(" | Color: ").append(light.getColor())
                     .append(" | Energy: ").append(String.format("%.1f", light.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartPlug plug) {
-            sb.append(plug.isOn() ? "On" : "Off")
+            case SmartPlug plug -> sb.append(plug.isOn() ? "On" : "Off")
                     .append(" | Energy: ").append(String.format("%.1f", plug.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartSecurityCam cam) {
-            sb.append(cam.isOn() ? "On" : "Off")
+            case SmartSecurityCam cam -> sb.append(cam.isOn() ? "On" : "Off")
                     .append(" | Alerts: ").append(cam.isAlertsEnabled() ? "Enabled" : "Disabled")
                     .append(" | Mode: ").append(cam.getMode())
                     .append(" | Energy: ").append(String.format("%.1f", cam.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartSecurityLock lock) {
-            sb.append("Lock Status: ").append(lock.isLocked() ? "Locked" : "Unlocked")
+            case SmartSecurityLock lock -> sb.append("Lock Status: ").append(lock.isLocked() ? "Locked" : "Unlocked")
                     .append(" | Energy: ").append(String.format("%.1f", lock.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartRefrigerator fridge) {
-            sb.append(fridge.isOn() ? "On" : "Off")
+            case SmartRefrigerator fridge -> sb.append(fridge.isOn() ? "On" : "Off")
                     .append(" | Temp: ").append(fridge.getTemperature()).append("°C")
                     .append(" | Energy Saving: ").append(fridge.isEnergySavingMode() ? "Enabled" : "Disabled")
                     .append(" | Inventory: ").append(fridge.getInventory())
                     .append(" | Energy: ").append(String.format("%.1f", fridge.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartWashingMachine washer) {
-            sb.append("Status: ").append(washer.getCycleStatus())
+            case SmartWashingMachine washer -> sb.append("Status: ").append(washer.getCycleStatus())
                     .append(" | Water: ").append(washer.getWaterUsage()).append("L")
                     .append(" | Mode: ").append(washer.getMode())
                     .append(" | Energy: ").append(String.format("%.1f", washer.getEnergyConsumption())).append("W");
-        } else if (appliance instanceof SmartAirPurifier purifier) {
-            sb.append("Air Quality: ").append(purifier.getAirQuality())
+            case SmartAirPurifier purifier -> sb.append("Air Quality: ").append(purifier.getAirQuality())
                     .append(" | Mode: ").append(purifier.getMode())
                     .append(" | Energy: ").append(String.format("%.1f", purifier.getEnergyConsumption())).append("W");
-        } else {
-            sb.append("Unknown appliance type");
+            default -> sb.append("Unknown appliance type");
         }
         return sb.toString();
     }
