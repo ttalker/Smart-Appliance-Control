@@ -7,7 +7,7 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         setTitle("Main Window");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(800, 1000);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel();
