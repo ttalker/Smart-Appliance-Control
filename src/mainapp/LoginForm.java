@@ -41,5 +41,6 @@ public class LoginForm extends JFrame{
         panel.add(loginButton, gbc);
 
         add(panel);
+        
     }
 }
