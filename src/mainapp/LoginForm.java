@@ -54,7 +54,7 @@ public class LoginForm extends JFrame{
             String user = usernameField.getText().trim();
             String pass = new String(passwordField.getPassword());
             
-            LoginInfo currentUser = new LoginInfo(user, pass)
+            LoginInfo currentUser = new LoginInfo(user, pass);
             
             if (currentUser.validateLogin(user,pass)) {
                 
