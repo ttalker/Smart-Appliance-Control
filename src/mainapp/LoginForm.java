@@ -61,6 +61,7 @@ public class LoginForm extends JFrame{
                 // call the mainwindow
                 SwingUtilities.invokeLater(() -> {
                 MainWindow window = new MainWindow();
+                dispose();
                 window.setVisible(true);
                 });
 
