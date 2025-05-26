@@ -52,7 +52,7 @@ public class LoginInfo {
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
             ex.printStackTrace();
-           JOptionPane.showMessageDialog(null, "Login info saved.");
+           JOptionPane.showMessageDialog(null, "Information saved to logins.txt.");
         }
 
     }

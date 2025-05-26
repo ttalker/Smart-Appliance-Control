@@ -51,6 +51,14 @@ public class LoginForm extends JFrame{
         
         // login button 
         loginButton.addActionListener(e -> {
+            String user = usernameField.getText().trim();
+            String pass = new String(passwordField.getPassword());
+            
+            LoginInfo currentUser = new LoginInfo(user, pass)
+            
+            if (currentUser.validateLogin(user,pass)) {
+                
+            }
 
 
         });
