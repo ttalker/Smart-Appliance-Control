@@ -20,8 +20,7 @@ public class Main {
         LoginForm login = new LoginForm();
         login.setVisible(true);
 
-        SignupForm sign = new SignupForm();
-        sign.setVisible(true);
+        
   }
 
 }

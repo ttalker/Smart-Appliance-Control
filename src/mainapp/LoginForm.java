@@ -49,12 +49,10 @@ public class LoginForm extends JFrame{
 
         add(panel);
 
-        String user = usernameField.getText().trim();
-        String pass = new String(passwordField.getPassword());
-
         // login button action listener
         loginButton.addActionListener(e -> {
-           
+            String user = usernameField.getText().trim();
+            String pass = new String(passwordField.getPassword());
             
             LoginInfo currentUser = new LoginInfo(user, pass);
             
@@ -67,11 +65,16 @@ public class LoginForm extends JFrame{
                 });
 
             }
+            else{
+                JOptionPane.showMessageDialog(panel, "username or password is incorrect!");
+            }
         });
         
         // sign up button action listener
          signupButton.addActionListener(e -> {
-            
+            SignupForm sign = new SignupForm();
+            dispose();
+            sign.setVisible(true);
         });
     }
 }
