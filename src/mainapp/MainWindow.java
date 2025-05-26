@@ -30,6 +30,12 @@ public class MainWindow extends JFrame {
     private Color darkMainBg = new Color(33, 37, 43);
     private Color accentColor = new Color(66, 139, 202);
     
+    // appliance attributes 
+    private JTextField locationField;
+    private JComboBox<String> applianceComboBox;
+    private JButton addApplianceButton; 
+
+
 
     public MainWindow() {
         initializeComponents();
@@ -332,40 +338,54 @@ public class MainWindow extends JFrame {
         return panel;
     }
 
-    private JPanel createAddAppliancesPanel(){
-        JPanel panel = new JPanel(new BorderLayout());
-        
-        JLabel titleLabel = new JLabel("Add Appliances", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
-        
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        
-        // Add some form elements as example
-        gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 1;
-        formPanel.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 2;
-        formPanel.add(new JLabel("Full Name:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
-        
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(formPanel, BorderLayout.CENTER);
-        
-        return panel;
+    private JPanel createAddAppliancesPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    
+    JLabel titleLabel = new JLabel("Add Appliances", SwingConstants.CENTER);
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+    titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+    
+    JPanel formPanel = new JPanel(new GridBagLayout());
+    formPanel.setOpaque(false);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.anchor = GridBagConstraints.WEST;
+    
+    // Location field
+    gbc.gridx = 0; gbc.gridy = 0;
+    formPanel.add(new JLabel("Location:"), gbc);
+    gbc.gridx = 1;
+    locationField = new JTextField(20);
+    formPanel.add(locationField, gbc);
+    
+    // ComboBox for appliances
+    gbc.gridx = 0; gbc.gridy = 1;
+    formPanel.add(new JLabel("Type of Appliance:"), gbc);
+
+    applianceComboBox = new JComboBox<>();
+    String[] appliances = {
+        "AC", "Light", "Plug", "Door Cam",
+        "Door Lock", "Fridge", "Laundry Washer", "Air Purifier"
+    };
+    for (String appliance : appliances) {
+        applianceComboBox.addItem(appliance);
     }
+
+    gbc.gridx = 1;
+    formPanel.add(applianceComboBox, gbc);
+    
+    // Add button
+    gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+    gbc.anchor = GridBagConstraints.CENTER;
+    addApplianceButton = new JButton("Add Appliance");
+    addApplianceButton.putClientProperty("Button.arc", 15);
+    formPanel.add(addApplianceButton, gbc);
+    
+    panel.add(titleLabel, BorderLayout.NORTH);
+    panel.add(formPanel, BorderLayout.CENTER);
+    
+    return panel;
+}
 
     private JPanel createLogsPanel(){
         JPanel panel = new JPanel(new BorderLayout());
