@@ -1,11 +1,20 @@
 package mainapp;
 
+import javax.swing.UIManager;
+import com.formdev.flatlaf.FlatDarkLaf;
+
 public class Main {
   public static void main(String[] args) {
     System.out.println("some changes");
- 
-    MainWindow window = new MainWindow();
-    window.setVisible(true);
-      
+ try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (Exception e) {
+            System.err.println("Failed to initialize FlatLaf theme");
+            e.printStackTrace();
+        }
+
+        // Create and show your main window
+        MainWindow window = new MainWindow();
+        window.setVisible(true);
   }
 }
