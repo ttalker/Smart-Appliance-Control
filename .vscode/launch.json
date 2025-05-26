@@ -5,7 +5,8 @@
             "type": "java",
             "request": "launch",
             "name": "Launch SAC app",
-            "mainClass": "mainapp.Main"
+            "mainClass": "mainapp.Main",
+            "vmArgs": "-cp .;lib/flatlaf-3.6.jar"
         }
     ]
 }
