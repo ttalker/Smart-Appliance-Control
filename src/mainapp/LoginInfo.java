@@ -47,7 +47,7 @@ public class LoginInfo {
 
     static void saveToFile(LoginInfo info) {
         try {
-            Files.write(Paths.get("logins.txt"), 
+            Files.write(Paths.get("appdata/logins.txt"), 
                 (info.toCSV() + System.lineSeparator()).getBytes(), 
                 StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {

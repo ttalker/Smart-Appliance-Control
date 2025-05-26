@@ -40,7 +40,25 @@ public class LoginForm extends JFrame{
         loginButton.putClientProperty("Button.arc", 15);
         panel.add(loginButton, gbc);
 
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JButton signupButton = new JButton("Sign-up");
+        loginButton.putClientProperty("Button.arc", 15);
+        panel.add(signupButton, gbc);
+
+
         add(panel);
         
+        // login button 
+        loginButton.addActionListener(e -> {
+
+
+        });
+        
+        // sign up button
+         signupButton.addActionListener(e -> {
+
+            
+        });
     }
 }
