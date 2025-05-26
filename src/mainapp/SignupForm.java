@@ -2,12 +2,14 @@ package mainapp;
 import java.awt.*;
 import javax.swing.*;
 
-public class LoginForm extends JFrame{
+public class SignupForm extends JFrame{
     private JTextField usernameField;
     private JPasswordField passwordField;
+    private JPasswordField confirmPasswordField;
 
-    public LoginForm() {
-        setTitle("Login Form");
+    public SignupForm(){
+
+        setTitle("Signup Form");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(350, 200);
         setLocationRelativeTo(null);
@@ -33,45 +35,38 @@ public class LoginForm extends JFrame{
         passwordField.putClientProperty("JTextField.placeholderText", "Enter password");
         panel.add(passwordField, gbc);
 
-        // Login Button
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JButton loginButton = new JButton("Login");
-        loginButton.putClientProperty("Button.arc", 15);
-        panel.add(loginButton, gbc);
+        // Confirm Password Label + Field
+        gbc.gridx = 0; gbc.gridy = 2;
+        panel.add(new JLabel("Confirm Password:"), gbc);
+        gbc.gridx = 1;
+        confirmPasswordField = new JPasswordField(15);
+        confirmPasswordField.putClientProperty("JTextField.placeholderText", "Confirm password");
+        panel.add(confirmPasswordField, gbc);
 
+        // signupButton
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         JButton signupButton = new JButton("Sign-up");
-        loginButton.putClientProperty("Button.arc", 15);
+        signupButton.putClientProperty("Button.arc", 15);
         panel.add(signupButton, gbc);
-
-
         add(panel);
+
 
         String user = usernameField.getText().trim();
         String pass = new String(passwordField.getPassword());
+        String confirmPass = new String(confirmPasswordField.getPassword());
 
-        // login button action listener
-        loginButton.addActionListener(e -> {
-           
-            
-            LoginInfo currentUser = new LoginInfo(user, pass);
-            
-            if (currentUser.validateLogin(user,pass)) {
-                JOptionPane.showMessageDialog(panel, "Logged in successfully...");
-                // call the mainwindow
-                SwingUtilities.invokeLater(() -> {
-                MainWindow window = new MainWindow();
-                window.setVisible(true);
-                });
+        // validate pass and confirmPass
 
-            }
-        });
-        
-        // sign up button action listener
-         signupButton.addActionListener(e -> {
+        if (pass == confirmPass) {
             
-        });
+        } else {
+            
+        }
+
+
+
     }
+
+
 }
