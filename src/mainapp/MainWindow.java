@@ -29,7 +29,7 @@ public class MainWindow extends JFrame {
     private Color lightMainBg = Color.WHITE;
     private Color darkMainBg = new Color(33, 37, 43);
     private Color accentColor = new Color(66, 139, 202);
-    private Color hoverColor = new Color(76, 149, 212);
+    
 
     public MainWindow() {
         initializeComponents();
@@ -39,7 +39,7 @@ public class MainWindow extends JFrame {
     }
 
     private void initializeComponents() {
-        setTitle("Modern Themed Application");
+        setTitle("Smart Appliances Control App");
         setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -59,6 +59,8 @@ public class MainWindow extends JFrame {
         addPanel("Account", createAccountPanel());
         addPanel("Settings", createSettingsPanel());
         addPanel("More Info", createMoreInfoPanel());
+        addPanel("Appliances", createAddAppliancesPanel());
+        addPanel("Logs", createLogsPanel());
     }
 
     private void setupLayout() {
@@ -67,6 +69,7 @@ public class MainWindow extends JFrame {
         add(mainContent, BorderLayout.CENTER);
     }
 
+    // creates the topbar 
     private void createTopBar() {
         topBar = new JPanel();
         topBar.setLayout(new BorderLayout());
@@ -74,7 +77,7 @@ public class MainWindow extends JFrame {
         topBar.setBorder(new EmptyBorder(8, 15, 8, 15));
         
         // App title/logo area
-        JLabel titleLabel = new JLabel("Modern App");
+        JLabel titleLabel = new JLabel("Smart Appliances Control App");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         topBar.add(titleLabel, BorderLayout.WEST);
         
@@ -136,10 +139,16 @@ public class MainWindow extends JFrame {
         
         JButton homeBtn = createSidebarButton("🏠 Home", "Home");
         JButton accountBtn = createSidebarButton("👤 Account", "Account");
+        JButton addApplianceBtn = createSidebarButton("⚡ Add Appliances", "Appliances");
+        JButton logsBtn = createSidebarButton("📜 Logs", "Logs");
         
         topNav.add(homeBtn);
         topNav.add(Box.createVerticalStrut(8));
         topNav.add(accountBtn);
+        topNav.add(Box.createVerticalStrut(8));
+        topNav.add(addApplianceBtn);
+        topNav.add(Box.createVerticalStrut(8));
+        topNav.add(logsBtn);
         
         // Bottom navigation buttons
         JPanel bottomNav = new JPanel();
@@ -253,11 +262,13 @@ public class MainWindow extends JFrame {
         }
     }
 
+
+
     // Default panel creators - you can customize these or add your own content
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         
-        JLabel titleLabel = new JLabel("Welcome Home", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Current Appliances", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
         
@@ -317,6 +328,67 @@ public class MainWindow extends JFrame {
         
         panel.add(titleLabel, BorderLayout.NORTH);
         panel.add(formPanel, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private JPanel createAddAppliancesPanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("Add Appliances", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Add some form elements as example
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(new JTextField(20), gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(new JTextField(20), gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Full Name:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(new JTextField(20), gbc);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(formPanel, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private JPanel createLogsPanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("Logs", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JTextArea contentArea = new JTextArea();
+        contentArea.setText("Example Logs");
+        contentArea.setEditable(false);
+        contentArea.setOpaque(false);
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        
+        JScrollPane scrollPane = new JScrollPane(contentArea);
+        scrollPane.setBorder(null);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
         
         return panel;
     }
