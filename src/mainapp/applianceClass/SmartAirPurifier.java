@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartAirPurifier extends SmartAppliance {
     private String airQuality = "Good";

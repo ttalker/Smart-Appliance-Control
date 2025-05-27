@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public interface AdjustableLight {
     void setBrightness(int brightness);

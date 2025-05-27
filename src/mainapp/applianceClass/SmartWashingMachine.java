@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartWashingMachine extends SmartAppliance implements WashCycleControl {
     private String cycleStatus; // "Idle", "Running", "Finished"

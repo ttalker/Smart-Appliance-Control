@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 import java.util.ArrayList;
 import java.util.List;

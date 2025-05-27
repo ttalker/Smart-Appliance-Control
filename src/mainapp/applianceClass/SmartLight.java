@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartLight extends SmartAppliance implements AdjustableLight {
     private int brightness; // 0 - 100

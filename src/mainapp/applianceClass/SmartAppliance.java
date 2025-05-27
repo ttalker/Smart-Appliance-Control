@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public abstract class SmartAppliance implements Controls {
     private String name;

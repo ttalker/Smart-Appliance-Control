@@ -1,156 +1,589 @@
 package mainapp;
 
+
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
+import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
+
+import mainapp.applianceClass.*;
 
 public class MainWindow extends JFrame {
-    private ApplianceManager manager;
+    private boolean isDarkMode = false;
+    private JPanel sidebar;
+    private JPanel mainContent;
+    private JPanel topBar;
+    private JButton themeToggleBtn;
+    private JButton selectedButton = null;
+    private Map<String, JPanel> panels;
+    private CardLayout cardLayout;
+    
+    
+    // Colors for theming
+    private Color lightSidebarBg = new Color(248, 249, 250);
+    private Color darkSidebarBg = new Color(40, 44, 52);
+    private Color lightMainBg = Color.WHITE;
+    private Color darkMainBg = new Color(33, 37, 43);
+    private Color accentColor = new Color(66, 139, 202);
+    
+    // appliance attributes 
+    private JTextField locationField;
+    private JComboBox<String> applianceComboBox;
+    private JButton addApplianceButton; 
 
-    public MainWindow() {
+    // userinfo
+    private LoginInfo currentUser;
 
-        setTitle("Smart Home Control");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+
+    public MainWindow(LoginInfo currentUser) {
+        this.currentUser = currentUser;
+        initializeComponents();
+        setupLayout();
+        applyTheme();
+        setVisible(true);
+    }
+
+    private void initializeComponents() {
+        setTitle("Smart Appliances Control App");
+        setSize(1200, 800);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-
-        manager = new ApplianceManager();
-        initializeAppliances();
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        JPanel appliancePanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        JScrollPane scrollPane = new JScrollPane(appliancePanel);
-        updateAppliancePanel(appliancePanel);
-
-        JPanel controlPanel = new JPanel(new FlowLayout());
-        JButton allOnButton = new JButton("All On");
-        JButton allOffButton = new JButton("All Off");
-        allOnButton.addActionListener(e -> {
-            manager.turnAllOn();
-            updateAppliancePanel(appliancePanel);
-        });
-        allOffButton.addActionListener(e -> {
-            manager.turnAllOff();
-            updateAppliancePanel(appliancePanel);
-        });
-        controlPanel.add(allOnButton);
-        controlPanel.add(allOffButton);
-
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(controlPanel, BorderLayout.SOUTH);
-
-        getContentPane().add(mainPanel);
+        setLayout(new BorderLayout(0, 0));
+        
+        // Initialize panels map
+        panels = new HashMap<>();
+        cardLayout = new CardLayout();
+        
+        // Create components
+        createTopBar();
+        createSidebar();
+        createMainContent();
+        
+        // Add default panels
+        addPanel("Home", createHomePanel());
+        addPanel("Account", createAccountPanel());
+        addPanel("Settings", createSettingsPanel());
+        addPanel("More Info", createMoreInfoPanel());
+        addPanel("Appliances", createAddAppliancesPanel());
+        addPanel("Logs", createLogsPanel());
     }
 
-    private void initializeAppliances() {
-        manager.addAppliance(new SmartAC("Living Room AC"));
-        manager.addAppliance(new SmartLight("Kitchen Light"));
-        manager.addAppliance(new SmartPlug("Coffee Maker Plug"));
-        manager.addAppliance(new SmartSecurityCam("Front Door Cam"));
-        manager.addAppliance(new SmartSecurityLock("Main Door Lock"));
-        manager.addAppliance(new SmartRefrigerator("Kitchen Fridge"));
-        manager.addAppliance(new SmartWashingMachine("Laundry Washer"));
-        manager.addAppliance(new SmartAirPurifier("Bedroom Purifier"));
+    private void setupLayout() {
+        add(topBar, BorderLayout.NORTH);
+        add(sidebar, BorderLayout.WEST);
+        add(mainContent, BorderLayout.CENTER);
     }
 
-    private void updateAppliancePanel(JPanel panel) {
-        panel.removeAll();
-        for (SmartAppliance appliance : manager.getAppliances()) {
-            JPanel applianceRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JLabel statusLabel = new JLabel(getStatusText(appliance));
-            JButton toggleButton = new JButton(appliance.isOn() ? "Turn Off" : "Turn On");
-            toggleButton.addActionListener(e -> {
-                if (appliance.isOn()) {
-                    appliance.turnOff();
-                    toggleButton.setText("Turn On");
-                } else {
-                    appliance.turnOn();
-                    toggleButton.setText("Turn Off");
+    // creates the topbar 
+    private void createTopBar() {
+        topBar = new JPanel();
+        topBar.setLayout(new BorderLayout());
+        topBar.setPreferredSize(new Dimension(getWidth(), 50));
+        topBar.setBorder(new EmptyBorder(8, 15, 8, 15));
+        
+        // App title/logo area
+        JLabel titleLabel = new JLabel("Smart Appliances Control App");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        topBar.add(titleLabel, BorderLayout.WEST);
+        
+        // Right panel for theme toggle
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        rightPanel.setOpaque(false);
+        
+        createThemeToggleButton();
+        rightPanel.add(themeToggleBtn);
+        
+        topBar.add(rightPanel, BorderLayout.EAST);
+    }
+
+    private void createThemeToggleButton() {
+        themeToggleBtn = new JButton();
+        themeToggleBtn.setPreferredSize(new Dimension(40, 32));
+        themeToggleBtn.setFocusPainted(false);
+        themeToggleBtn.setBorderPainted(false);
+        themeToggleBtn.setContentAreaFilled(false);
+        themeToggleBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        themeToggleBtn.setToolTipText("Toggle Theme");
+        
+        // Add hover effect
+        themeToggleBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                themeToggleBtn.setContentAreaFilled(true);
+                themeToggleBtn.setBackground(isDarkMode ? 
+                    new Color(70, 74, 82) : new Color(240, 240, 240));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                themeToggleBtn.setContentAreaFilled(false);
+            }
+        });
+        
+        themeToggleBtn.addActionListener(e -> toggleTheme());
+        updateThemeToggleIcon();
+    }
+
+    private void updateThemeToggleIcon() {
+        String icon = isDarkMode ? "☀" : "🌙";
+        themeToggleBtn.setText(icon);
+        themeToggleBtn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
+    }
+
+    private void createSidebar() {
+        sidebar = new JPanel();
+        sidebar.setLayout(new BorderLayout());
+        sidebar.setPreferredSize(new Dimension(240, getHeight()));
+        sidebar.setBorder(new EmptyBorder(20, 0, 20, 0));
+        
+        // Top navigation buttons
+        JPanel topNav = new JPanel();
+        topNav.setLayout(new BoxLayout(topNav, BoxLayout.Y_AXIS));
+        topNav.setOpaque(false);
+        topNav.setBorder(new EmptyBorder(0, 15, 0, 15));
+        
+        JButton homeBtn = createSidebarButton("🏠 Home", "Home");
+        JButton accountBtn = createSidebarButton("👤 Account", "Account");
+        JButton addApplianceBtn = createSidebarButton("⚡ Add Appliances", "Appliances");
+        JButton logsBtn = createSidebarButton("📜 Logs", "Logs");
+        
+        topNav.add(homeBtn);
+        topNav.add(Box.createVerticalStrut(8));
+        topNav.add(accountBtn);
+        topNav.add(Box.createVerticalStrut(8));
+        topNav.add(addApplianceBtn);
+        topNav.add(Box.createVerticalStrut(8));
+        topNav.add(logsBtn);
+        
+        // Bottom navigation buttons
+        JPanel bottomNav = new JPanel();
+        bottomNav.setLayout(new BoxLayout(bottomNav, BoxLayout.Y_AXIS));
+        bottomNav.setOpaque(false);
+        bottomNav.setBorder(new EmptyBorder(0, 15, 0, 15));
+        
+        JButton settingsBtn = createSidebarButton("⚙️ Settings", "Settings");
+        JButton moreInfoBtn = createSidebarButton("ℹ️ More Info", "More Info");
+        JButton logoutBtn = createSidebarButton("🚪 Logout", null);
+        
+        // Add logout functionality
+        logoutBtn.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to logout?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+            );
+            if (result == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
+        
+        bottomNav.add(settingsBtn);
+        bottomNav.add(Box.createVerticalStrut(8));
+        bottomNav.add(moreInfoBtn);
+        bottomNav.add(Box.createVerticalStrut(8));
+        bottomNav.add(logoutBtn);
+        
+        sidebar.add(topNav, BorderLayout.NORTH);
+        sidebar.add(bottomNav, BorderLayout.SOUTH);
+        
+        // Select home by default
+        SwingUtilities.invokeLater(() -> {
+            homeBtn.doClick();
+        });
+    }
+
+    private JButton createSidebarButton(String text, String panelName) {
+        JButton button = new JButton(text);
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setPreferredSize(new Dimension(210, 42));
+        button.setMaximumSize(new Dimension(210, 42));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        button.setBorder(new EmptyBorder(8, 16, 8, 16));
+        
+        // Add hover and selection effects
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (selectedButton != button) {
+                    button.setContentAreaFilled(true);
+                    button.setBackground(isDarkMode ? 
+                        new Color(60, 64, 72) : new Color(240, 242, 245));
                 }
-                statusLabel.setText(getStatusText(appliance));
-            });
-            applianceRow.add(statusLabel);
-            applianceRow.add(toggleButton);
-
-            if (appliance instanceof TemperatureControl temperatureControl) {
-                JTextField tempField = new JTextField("24", 4);
-                JButton setTempButton = new JButton("Set Temp");
-                setTempButton.addActionListener(e -> {
-                    try {
-                        int temp = Integer.parseInt(tempField.getText());
-                        if (temp >= -10 && temp <= 40) {
-                            temperatureControl.setTemperature(temp);
-                            statusLabel.setText(getStatusText(appliance));
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Temperature must be between -10 and 40°C");
-                        }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(this, "Invalid temperature!");
-                    }
-                });
-                applianceRow.add(tempField);
-                applianceRow.add(setTempButton);
             }
-            if (appliance instanceof AdjustableLight adjustableLight) {
-                JTextField brightnessField = new JTextField("50", 4);
-                JButton setBrightnessButton = new JButton("Set Brightness");
-                setBrightnessButton.addActionListener(e -> {
-                    try {
-                        int brightness = Integer.parseInt(brightnessField.getText());
-                        if (brightness >= 0 && brightness <= 100) {
-                            adjustableLight.setBrightness(brightness);
-                            statusLabel.setText(getStatusText(appliance));
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Brightness must be between 0 and 100");
-                        }
-                    } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(this, "Invalid brightness!");
-                    }
-                });
-                applianceRow.add(brightnessField);
-                applianceRow.add(setBrightnessButton);
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (selectedButton != button) {
+                    button.setContentAreaFilled(false);
+                }
             }
-            panel.add(applianceRow);
+        });
+        
+        if (panelName != null) {
+            button.addActionListener(e -> selectButton(button, panelName));
         }
-        panel.revalidate();
-        panel.repaint();
+        
+        return button;
     }
 
-    private String getStatusText(SmartAppliance appliance) {
-        StringBuilder sb = new StringBuilder(appliance.getName() + ": ");
-        switch (appliance) {
-            case SmartAC ac -> sb.append(ac.isOn() ? "On" : "Off")
-                    .append(" | Temp: ").append(ac.getTemperature()).append("°C")
-                    .append(" | Mode: ").append(ac.getMode())
-                    .append(" | Energy: ").append(String.format("%.1f", ac.getEnergyConsumption())).append("W");
-            case SmartLight light -> sb.append(light.isOn() ? "On" : "Off")
-                    .append(" | Brightness: ").append(light.getBrightness())
-                    .append(" | Color: ").append(light.getColor())
-                    .append(" | Energy: ").append(String.format("%.1f", light.getEnergyConsumption())).append("W");
-            case SmartPlug plug -> sb.append(plug.isOn() ? "On" : "Off")
-                    .append(" | Energy: ").append(String.format("%.1f", plug.getEnergyConsumption())).append("W");
-            case SmartSecurityCam cam -> sb.append(cam.isOn() ? "On" : "Off")
-                    .append(" | Alerts: ").append(cam.isAlertsEnabled() ? "Enabled" : "Disabled")
-                    .append(" | Mode: ").append(cam.getMode())
-                    .append(" | Energy: ").append(String.format("%.1f", cam.getEnergyConsumption())).append("W");
-            case SmartSecurityLock lock -> sb.append("Lock Status: ").append(lock.isLocked() ? "Locked" : "Unlocked")
-                    .append(" | Energy: ").append(String.format("%.1f", lock.getEnergyConsumption())).append("W");
-            case SmartRefrigerator fridge -> sb.append(fridge.isOn() ? "On" : "Off")
-                    .append(" | Temp: ").append(fridge.getTemperature()).append("°C")
-                    .append(" | Energy Saving: ").append(fridge.isEnergySavingMode() ? "Enabled" : "Disabled")
-                    .append(" | Inventory: ").append(fridge.getInventory())
-                    .append(" | Energy: ").append(String.format("%.1f", fridge.getEnergyConsumption())).append("W");
-            case SmartWashingMachine washer -> sb.append("Status: ").append(washer.getCycleStatus())
-                    .append(" | Water: ").append(washer.getWaterUsage()).append("L")
-                    .append(" | Mode: ").append(washer.getMode())
-                    .append(" | Energy: ").append(String.format("%.1f", washer.getEnergyConsumption())).append("W");
-            case SmartAirPurifier purifier -> sb.append("Air Quality: ").append(purifier.getAirQuality())
-                    .append(" | Mode: ").append(purifier.getMode())
-                    .append(" | Energy: ").append(String.format("%.1f", purifier.getEnergyConsumption())).append("W");
-            default -> sb.append("Unknown appliance type");
+    private void selectButton(JButton button, String panelName) {
+        // Update previous selected button
+        if (selectedButton != null) {
+            selectedButton.setContentAreaFilled(false);
+            selectedButton.setBackground(null);
+            // Reset foreground color to default theme color
+            selectedButton.setForeground(null);
         }
-        return sb.toString();
+        
+        // Update new selected button
+        selectedButton = button;
+        button.setContentAreaFilled(true);
+        button.setBackground(accentColor);
+        button.setForeground(Color.WHITE);
+        
+        // Show corresponding panel
+        showPanel(panelName);
     }
+
+    private void createMainContent() {
+        mainContent = new JPanel(cardLayout);
+        mainContent.setBorder(new EmptyBorder(20, 20, 20, 20));
+    }
+
+    public void addPanel(String name, JPanel panel) {
+        panels.put(name, panel);
+        mainContent.add(panel, name);
+    }
+
+    public void showPanel(String name) {
+        if (panels.containsKey(name)) {
+            cardLayout.show(mainContent, name);
+        }
+    }
+
+
+
+    // Default panel creators 
+   
+    private JPanel createHomePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Current Appliances", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+
+        // Appliance container panel (list inside scroll pane)
+        JPanel applianceListPanel = new JPanel();
+        applianceListPanel.setLayout(new BoxLayout(applianceListPanel, BoxLayout.Y_AXIS));
+        applianceListPanel.setOpaque(false);
+
+        // Add many appliances
+        String[] appliances = {
+            "AC", "Light", "Plug", "Door Cam",
+            "Door Lock", "Fridge", "Laundry Washer", "Air Purifier",
+            "Hello", "Hello", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+        };
+
+        for (String name : appliances) {
+            JPanel itemPanel = new JPanel(new BorderLayout());
+            itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            itemPanel.add(new JLabel(name), BorderLayout.WEST);
+            applianceListPanel.add(itemPanel);
+        }
+
+        
+        JScrollPane scrollPane = new JScrollPane(applianceListPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.setBorder(null);
+
+        
+        applianceListPanel.setPreferredSize(new Dimension(300, appliances.length * 40));
+
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // add helper methods to make 
+
+    private void makeAppliancePanel(SmartAppliance sa){
+
+    }
+
+    private void loadAllAppliances(){
+
+
+
+    }
+
+
+
+    private JPanel createAccountPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("Account Settings", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setOpaque(false);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // Add some form elements as example
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        formPanel.add(new JLabel(currentUser.getUsername()), gbc);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(formPanel, BorderLayout.WEST);
+        
+        return panel;
+    }
+
+    private JPanel createAddAppliancesPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    
+    JLabel titleLabel = new JLabel("Add Appliances", SwingConstants.CENTER);
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+    titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+    
+    JPanel formPanel = new JPanel(new GridBagLayout());
+    formPanel.setOpaque(false);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(10, 10, 10, 10);
+    gbc.anchor = GridBagConstraints.WEST;
+    
+    // Location field
+    gbc.gridx = 0; gbc.gridy = 0;
+    formPanel.add(new JLabel("Location:"), gbc);
+    gbc.gridx = 1;
+    locationField = new JTextField(20);
+    formPanel.add(locationField, gbc);
+    
+    // ComboBox for appliances
+    gbc.gridx = 0; gbc.gridy = 1;
+    formPanel.add(new JLabel("Type of Appliance:"), gbc);
+
+    applianceComboBox = new JComboBox<>();
+    String[] appliances = {
+        "AC", "Light", "Plug", "Door Cam",
+        "Door Lock", "Fridge", "Laundry Washer", "Air Purifier"
+    };
+    for (String appliance : appliances) {
+        applianceComboBox.addItem(appliance);
+    }
+
+    gbc.gridx = 1;
+    formPanel.add(applianceComboBox, gbc);
+    
+    // Add button
+    gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+    gbc.anchor = GridBagConstraints.CENTER;
+    addApplianceButton = new JButton("Add Appliance");
+    addApplianceButton.putClientProperty("Button.arc", 15);
+    formPanel.add(addApplianceButton, gbc);
+    
+    panel.add(titleLabel, BorderLayout.NORTH);
+    panel.add(formPanel, BorderLayout.CENTER);
+    
+    return panel;
 }
 
+    private JPanel createLogsPanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("Logs", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JTextArea contentArea = new JTextArea();
+        contentArea.setText("Example Logs");
+        contentArea.setEditable(false);
+        contentArea.setOpaque(false);
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        
+        JScrollPane scrollPane = new JScrollPane(contentArea);
+        scrollPane.setBorder(null);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private JPanel createSettingsPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("Settings", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JTextArea contentArea = new JTextArea();
+        contentArea.setText("Settings Panel\n\nConfigure your application preferences here.\n\n" +
+                           "You can add various settings controls such as:\n" +
+                           "• Theme preferences\n" +
+                           "• Notification settings\n" +
+                           "• Language selection\n" +
+                           "• Privacy options\n" +
+                           "• Data management");
+        contentArea.setEditable(false);
+        contentArea.setOpaque(false);
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        
+        JScrollPane scrollPane = new JScrollPane(contentArea);
+        scrollPane.setBorder(null);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private JPanel createMoreInfoPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        JLabel titleLabel = new JLabel("More Information", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        
+        JTextArea contentArea = new JTextArea();
+        contentArea.setText("Additional Information\n\nThis panel can contain:\n\n" +
+                           "• Help documentation\n" +
+                           "• FAQ section\n" +
+                           "• Contact information\n" +
+                           "• Version information\n" +
+                           "• Legal notices\n" +
+                           "• Support resources\n\n" +
+                           "Customize this content based on your application's needs.");
+        contentArea.setEditable(false);
+        contentArea.setOpaque(false);
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        
+        JScrollPane scrollPane = new JScrollPane(contentArea);
+        scrollPane.setBorder(null);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        
+        panel.add(titleLabel, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
+    private void toggleTheme() {
+        isDarkMode = !isDarkMode;
+        applyTheme();
+        updateThemeToggleIcon();
+    }
+
+    private void applyTheme() {
+        try {
+            if (isDarkMode) {
+                UIManager.setLookAndFeel(new FlatDarkLaf());
+                FlatDarkFlatIJTheme.setup();
+            } else {
+                UIManager.setLookAndFeel(new FlatLightLaf());
+                FlatLightFlatIJTheme.setup();
+            }
+            
+            // Update custom colors
+            updateComponentColors();
+            SwingUtilities.updateComponentTreeUI(this);
+            
+            // Reselect the current button to maintain selection state
+            if (selectedButton != null) {
+                selectedButton.setContentAreaFilled(true);
+                selectedButton.setBackground(accentColor);
+                selectedButton.setForeground(Color.WHITE);
+            }
+            
+            // Ensure all non-selected buttons have proper foreground color
+            updateSidebarButtonColors();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateComponentColors() {
+        // Update sidebar
+        sidebar.setBackground(isDarkMode ? darkSidebarBg : lightSidebarBg);
+        
+        // Update main content
+        mainContent.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+        
+        // Update top bar
+        topBar.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+    }
+    
+    private void updateSidebarButtonColors() {
+        // Reset foreground colors for all sidebar buttons after theme change
+        Component[] components = sidebar.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JPanel) {
+                resetButtonColorsInPanel((JPanel) comp);
+            }
+        }
+    }
+    
+    private void resetButtonColorsInPanel(JPanel panel) {
+        for (Component comp : panel.getComponents()) {
+            if (comp instanceof JButton && comp != selectedButton) {
+                JButton btn = (JButton) comp;
+                btn.setForeground(null); // Reset to theme default
+            } else if (comp instanceof JPanel) {
+                resetButtonColorsInPanel((JPanel) comp);
+            }
+        }
+    }
+
+    // Utility method to create custom panels easily
+    public JPanel createCustomPanel(String title, Component content) {
+        JPanel panel = new JPanel(new BorderLayout());
+        
+        if (title != null && !title.isEmpty()) {
+            JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+            titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+            panel.add(titleLabel, BorderLayout.NORTH);
+        }
+        
+        if (content != null) {
+            panel.add(content, BorderLayout.CENTER);
+        }
+        
+        return panel;
+    }
+}
