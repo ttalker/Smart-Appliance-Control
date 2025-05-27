@@ -323,6 +323,20 @@ public class MainWindow extends JFrame {
         return panel;
     }
 
+    // add helper methods to make 
+
+    private void makeAppliancePanel(SmartAppliance sa){
+
+    }
+
+    private void loadAllAppliances(){
+
+
+
+    }
+
+
+
     private JPanel createAccountPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         
