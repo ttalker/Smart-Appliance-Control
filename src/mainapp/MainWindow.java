@@ -39,6 +39,8 @@ public class MainWindow extends JFrame {
     private JComboBox<String> applianceComboBox;
     private JButton addApplianceButton; 
 
+    private ApplianceManager manager; 
+
     // userinfo
     private LoginInfo currentUser;
 
@@ -325,8 +327,91 @@ public class MainWindow extends JFrame {
 
     // add helper methods to make 
 
-    private void makeAppliancePanel(SmartAppliance sa){
+    private JPanel makeApplianceTemplate(String applianceType, String location) {
+        // Main horizontal panel
+        JPanel appliancePanel = new JPanel(new BorderLayout());
+        appliancePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        appliancePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // make it stretch horizontally
 
+        // Left: Appliance label
+        JLabel nameLabel = new JLabel(location + " " + applianceType);
+        nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        appliancePanel.add(nameLabel, BorderLayout.WEST);
+
+        // Right: Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        
+        JButton toggleButton = new JButton("On");
+        JButton deleteButton = new JButton("Delete");
+
+        buttonPanel.add(toggleButton);
+        buttonPanel.add(deleteButton);
+
+        appliancePanel.add(buttonPanel, BorderLayout.EAST);
+
+        // CENTER: Placeholder panel for specific controls later
+        JPanel customControlsPanel = new JPanel();
+        customControlsPanel.setOpaque(false);
+        appliancePanel.add(customControlsPanel, BorderLayout.CENTER);
+
+        appliancePanel.putClientProperty("customControls", customControlsPanel);
+
+        // Optional: add action listener logic
+        toggleButton.addActionListener(e -> {
+            if (toggleButton.getText().equals("On")) {
+                toggleButton.setText("Off");
+            } else {
+                toggleButton.setText("On");
+            }
+        });
+
+        deleteButton.addActionListener(e -> {
+            // You can handle deletion in the calling code
+            JOptionPane.showMessageDialog(appliancePanel, "Delete clicked for " + applianceType);
+        });
+
+        return appliancePanel;
+    }
+
+
+    private JPanel makeAppliancePanel(){
+        String currentAppliance = applianceComboBox.getSelectedItem().toString().trim();
+        String location = locationField.getText().trim();
+        // the returned panel
+        JPanel newAppliance = new JPanel();
+
+        SmartAppliance appliance;
+
+        //access and create custom control UI for each smart appliance
+        JPanel customControlsPanel = (JPanel) newAppliance.getClientProperty("customControls");
+
+        // create a appliance panel based on the smart appliance
+            appliance = new SmartAC(location + currentAppliance);
+            manager.addAppliance(appliance);
+            newAppliance = makeApplianceTemplate(location, currentAppliance);
+
+        switch (currentAppliance){
+            case "AC":
+                
+                JLabel nameLabel = new JLabel("test");
+                customControlsPanel.add(nameLabel,BorderLayout.WEST);
+
+            case "Light":
+                
+            case "Plug":
+                
+            case "Door Cam":
+                
+            case "Door Lock":
+                
+            case "Fridge":
+             
+            case "Laundry Washer":
+                
+            case "Air Purifier":
+        
+        }
+        return newAppliance;
     }
 
     private void loadAllAppliances(){
