@@ -48,7 +48,6 @@ public class MainWindow extends JFrame {
     }
 
     private void initializeComponents() {
-        System.out.println(currentUser.getUsername());
         setTitle("Smart Appliances Control App");
         setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

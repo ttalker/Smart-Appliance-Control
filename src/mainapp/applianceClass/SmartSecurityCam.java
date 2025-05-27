@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartSecurityCam extends SmartAppliance implements AlertSystem {
     private boolean alertsEnabled;

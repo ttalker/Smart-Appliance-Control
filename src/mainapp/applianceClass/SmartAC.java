@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartAC extends SmartAppliance implements TemperatureControl {
     private int temperature;

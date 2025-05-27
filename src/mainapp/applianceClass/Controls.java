@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public interface Controls {
     void turnOn();

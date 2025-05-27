@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartSecurityLock extends SmartAppliance implements Lockable {
     private boolean isLocked;

@@ -1,4 +1,4 @@
-package mainapp;
+package mainapp.applianceClass;
 
 public class SmartPlug extends SmartAppliance {
     public SmartPlug(String name) {
