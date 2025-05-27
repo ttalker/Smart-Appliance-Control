@@ -35,9 +35,12 @@ public class MainWindow extends JFrame {
     private JComboBox<String> applianceComboBox;
     private JButton addApplianceButton; 
 
+    // userinfo
+    private LoginInfo currentUser;
 
 
-    public MainWindow() {
+    public MainWindow(LoginInfo currentUser) {
+        this.currentUser = currentUser;
         initializeComponents();
         setupLayout();
         applyTheme();
@@ -45,6 +48,7 @@ public class MainWindow extends JFrame {
     }
 
     private void initializeComponents() {
+        System.out.println(currentUser.getUsername());
         setTitle("Smart Appliances Control App");
         setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
