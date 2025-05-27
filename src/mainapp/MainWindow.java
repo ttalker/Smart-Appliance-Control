@@ -1,13 +1,15 @@
 package mainapp;
 
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.awt.event.*;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -27,12 +29,14 @@ public class MainWindow extends JFrame {
     private CardLayout cardLayout;
     
     
-    // Colors for theming
-    private Color lightSidebarBg = new Color(248, 249, 250);
-    private Color darkSidebarBg = new Color(40, 44, 52);
-    private Color lightMainBg = Color.WHITE;
-    private Color darkMainBg = new Color(33, 37, 43);
-    private Color accentColor = new Color(66, 139, 202);
+    // Colors for theming(JeemUpdate)
+    private Color lightSidebarBg = new Color(250, 251, 252);
+    private Color darkSidebarBg = new Color(30, 35, 42);
+    private Color lightMainBg = new Color(255, 255, 255);
+    private Color darkMainBg = new Color(24, 28, 33);
+    private Color accentColor = new Color(79, 70, 229); // Professional indigo
+    private Color lightBorderColor = new Color(229, 231, 235);
+    private Color darkBorderColor = new Color(55, 65, 81);
     
     // appliance attributes 
     private JTextField locationField;
@@ -82,27 +86,31 @@ public class MainWindow extends JFrame {
         add(mainContent, BorderLayout.CENTER);
     }
 
-    // creates the topbar 
-    private void createTopBar() {
-        topBar = new JPanel();
-        topBar.setLayout(new BorderLayout());
-        topBar.setPreferredSize(new Dimension(getWidth(), 50));
-        topBar.setBorder(new EmptyBorder(8, 15, 8, 15));
-        
-        // App title/logo area
-        JLabel titleLabel = new JLabel("Smart Appliances Control App");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        topBar.add(titleLabel, BorderLayout.WEST);
-        
-        // Right panel for theme toggle
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        rightPanel.setOpaque(false);
-        
-        createThemeToggleButton();
-        rightPanel.add(themeToggleBtn);
-        
-        topBar.add(rightPanel, BorderLayout.EAST);
-    }
+    // creates the topbar (JeemUpdate)
+private void createTopBar() {
+    topBar = new JPanel();
+    topBar.setLayout(new BorderLayout());
+    topBar.setPreferredSize(new Dimension(getWidth(), 64));
+    topBar.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createMatteBorder(0, 0, 1, 0, isDarkMode ? darkBorderColor : lightBorderColor),
+        new EmptyBorder(16, 24, 16, 24)
+    ));
+    
+    // App title with better typography
+    JLabel titleLabel = new JLabel("Smart Appliances Control");
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+    titleLabel.setForeground(isDarkMode ? new Color(243, 244, 246) : new Color(17, 24, 39));
+    topBar.add(titleLabel, BorderLayout.WEST);
+    
+    // Right panel for theme toggle
+    JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+    rightPanel.setOpaque(false);
+    
+    createThemeToggleButton();
+    rightPanel.add(themeToggleBtn);
+    
+    topBar.add(rightPanel, BorderLayout.EAST);
+}
 
     private void createThemeToggleButton() {
         themeToggleBtn = new JButton();
@@ -138,108 +146,167 @@ public class MainWindow extends JFrame {
         themeToggleBtn.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
     }
 
-    private void createSidebar() {
-        sidebar = new JPanel();
-        sidebar.setLayout(new BorderLayout());
-        sidebar.setPreferredSize(new Dimension(240, getHeight()));
-        sidebar.setBorder(new EmptyBorder(20, 0, 20, 0));
-        
-        // Top navigation buttons
-        JPanel topNav = new JPanel();
-        topNav.setLayout(new BoxLayout(topNav, BoxLayout.Y_AXIS));
-        topNav.setOpaque(false);
-        topNav.setBorder(new EmptyBorder(0, 15, 0, 15));
-        
-        JButton homeBtn = createSidebarButton("🏠 Home", "Home");
-        JButton accountBtn = createSidebarButton("👤 Account", "Account");
-        JButton addApplianceBtn = createSidebarButton("⚡ Add Appliances", "Appliances");
-        JButton logsBtn = createSidebarButton("📜 Logs", "Logs");
-        
-        topNav.add(homeBtn);
-        topNav.add(Box.createVerticalStrut(8));
-        topNav.add(accountBtn);
-        topNav.add(Box.createVerticalStrut(8));
-        topNav.add(addApplianceBtn);
-        topNav.add(Box.createVerticalStrut(8));
-        topNav.add(logsBtn);
-        
-        // Bottom navigation buttons
-        JPanel bottomNav = new JPanel();
-        bottomNav.setLayout(new BoxLayout(bottomNav, BoxLayout.Y_AXIS));
-        bottomNav.setOpaque(false);
-        bottomNav.setBorder(new EmptyBorder(0, 15, 0, 15));
-        
-        JButton settingsBtn = createSidebarButton("⚙️ Settings", "Settings");
-        JButton moreInfoBtn = createSidebarButton("ℹ️ More Info", "More Info");
-        JButton logoutBtn = createSidebarButton("🚪 Logout", null);
-        
-        // Add logout functionality
-        logoutBtn.addActionListener(e -> {
-            int result = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to logout?",
-                "Confirm Logout",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-            );
-            if (result == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-        });
-        
-        bottomNav.add(settingsBtn);
-        bottomNav.add(Box.createVerticalStrut(8));
-        bottomNav.add(moreInfoBtn);
-        bottomNav.add(Box.createVerticalStrut(8));
-        bottomNav.add(logoutBtn);
-        
-        sidebar.add(topNav, BorderLayout.NORTH);
-        sidebar.add(bottomNav, BorderLayout.SOUTH);
-        
-        // Select home by default
-        SwingUtilities.invokeLater(() -> {
-            homeBtn.doClick();
-        });
-    }
+private void createSidebar() {
+    sidebar = new JPanel();
+    sidebar.setLayout(new BorderLayout());
+    sidebar.setPreferredSize(new Dimension(280, getHeight()));
+    sidebar.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, isDarkMode ? darkBorderColor : lightBorderColor));
+    
+    // Main navigation section
+    JPanel navContainer = new JPanel(new BorderLayout());
+    navContainer.setBackground(isDarkMode ? darkSidebarBg : lightSidebarBg);
+    navContainer.setBorder(new EmptyBorder(32, 0, 32, 0));
+    
+    // Top navigation buttons
+    JPanel topNav = new JPanel();
+    topNav.setLayout(new BoxLayout(topNav, BoxLayout.Y_AXIS));
+    topNav.setOpaque(false);
+    topNav.setBorder(new EmptyBorder(0, 24, 0, 24));
+    
+    // Navigation section header
+    JLabel navHeader = new JLabel("NAVIGATION");
+    navHeader.setFont(new Font("Segoe UI", Font.BOLD, 11));
+    navHeader.setForeground(isDarkMode ? new Color(156, 163, 175) : new Color(107, 114, 128));
+    navHeader.setBorder(new EmptyBorder(0, 16, 16, 0));
+    topNav.add(navHeader);
+    
+    JButton homeBtn = createSidebarButton("🏠 Home", "Home");
+    JButton accountBtn = createSidebarButton("👤 Account", "Account");
+    JButton addApplianceBtn = createSidebarButton("⚡ Add Appliances", "Appliances");
+    JButton logsBtn = createSidebarButton("📜 Logs", "Logs");
+    
+    topNav.add(homeBtn);
+    topNav.add(Box.createVerticalStrut(4));
+    topNav.add(accountBtn);
+    topNav.add(Box.createVerticalStrut(4));
+    topNav.add(addApplianceBtn);
+    topNav.add(Box.createVerticalStrut(4));
+    topNav.add(logsBtn);
+    
+    // Bottom navigation section
+    JPanel bottomNav = new JPanel();
+    bottomNav.setLayout(new BoxLayout(bottomNav, BoxLayout.Y_AXIS));
+    bottomNav.setOpaque(false);
+    bottomNav.setBorder(new EmptyBorder(0, 24, 0, 24));
+    
+    // Settings section header
+    JLabel settingsHeader = new JLabel("SETTINGS");
+    settingsHeader.setFont(new Font("Segoe UI", Font.BOLD, 11));
+    settingsHeader.setForeground(isDarkMode ? new Color(156, 163, 175) : new Color(107, 114, 128));
+    settingsHeader.setBorder(new EmptyBorder(24, 16, 16, 0));
+    bottomNav.add(settingsHeader);
+    
+    JButton settingsBtn = createSidebarButton("⚙️ Settings", "Settings");
+    JButton moreInfoBtn = createSidebarButton("ℹ️ More Info", "More Info");
+    JButton logoutBtn = createSidebarButton("🚪 Logout", null);
+    
+    // Add logout functionality
+    logoutBtn.addActionListener(e -> {  
+        int result = JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to logout?",
+            "Confirm Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+        if (result == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    });
+    
+    bottomNav.add(settingsBtn);
+    bottomNav.add(Box.createVerticalStrut(4));
+    bottomNav.add(moreInfoBtn);
+    bottomNav.add(Box.createVerticalStrut(4));
+    bottomNav.add(logoutBtn);
+    
+    navContainer.add(topNav, BorderLayout.NORTH);
+    navContainer.add(bottomNav, BorderLayout.SOUTH);
+    sidebar.add(navContainer, BorderLayout.CENTER);
+    
+    // Select home by default
+    SwingUtilities.invokeLater(() -> {
+        homeBtn.doClick();
+    });
+}
 
     private JButton createSidebarButton(String text, String panelName) {
-        JButton button = new JButton(text);
-        button.setHorizontalAlignment(SwingConstants.LEFT);
-        button.setPreferredSize(new Dimension(210, 42));
-        button.setMaximumSize(new Dimension(210, 42));
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBorder(new EmptyBorder(8, 16, 8, 16));
-        
-        // Add hover and selection effects
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (selectedButton != button) {
-                    button.setContentAreaFilled(true);
-                    button.setBackground(isDarkMode ? 
-                        new Color(60, 64, 72) : new Color(240, 242, 245));
-                }
+    JButton button = new JButton(text);
+    button.setHorizontalAlignment(SwingConstants.LEFT);
+    button.setPreferredSize(new Dimension(232, 44));
+    button.setMaximumSize(new Dimension(232, 44));
+    button.setFocusPainted(false);
+    button.setBorderPainted(false);
+    button.setContentAreaFilled(false);
+    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+    button.setBorder(new EmptyBorder(12, 16, 12, 16));
+    button.setForeground(isDarkMode ? new Color(209, 213, 219) : new Color(75, 85, 99));
+    
+    // Professional hover and selection effects
+    button.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (selectedButton != button) {
+                button.setContentAreaFilled(true);
+                button.setBackground(isDarkMode ? new Color(55, 65, 81) : new Color(243, 244, 246));
             }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (selectedButton != button) {
-                    button.setContentAreaFilled(false);
-                }
-            }
-        });
-        
-        if (panelName != null) {
-            button.addActionListener(e -> selectButton(button, panelName));
         }
         
-        return button;
+        @Override
+        public void mouseExited(MouseEvent e) {
+            if (selectedButton != button) {
+                button.setContentAreaFilled(false);
+            }
+        }
+    });
+    
+    if (panelName != null) {
+        button.addActionListener(e -> selectProfessionalButton(button, panelName));
     }
+    
+    return button;
+}
 
+private void selectProfessionalButton(JButton button, String panelName) {
+    // Update previous selected button
+    if (selectedButton != null) {
+        selectedButton.setContentAreaFilled(false);
+        selectedButton.setBackground(null);
+        selectedButton.setForeground(isDarkMode ? new Color(209, 213, 219) : new Color(75, 85, 99));
+    }
+    
+    // Update new selected button with professional styling
+    selectedButton = button;
+    button.setContentAreaFilled(true);
+    button.setBackground(accentColor);
+    button.setForeground(Color.WHITE);
+    
+    // Show corresponding panel
+    showPanel(panelName);
+}
+
+// Updated updateComponentColors method(JeemUpdate)
+    private void updateComponentColors() {
+        // Update sidebar
+        sidebar.setBackground(isDarkMode ? darkSidebarBg : lightSidebarBg);
+        
+        // Update main content
+        mainContent.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+        
+        // Update top bar
+        topBar.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+    }
+    
+    private void updateSidebarButtonColors() {
+        // Reset foreground colors for all sidebar buttons after theme change
+        Component[] components = sidebar.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JPanel) {
+                resetButtonColorsInPanel((JPanel) comp);
+            }
+        }
+    }
     private void selectButton(JButton button, String panelName) {
         // Update previous selected button
         if (selectedButton != null) {
@@ -337,31 +404,126 @@ public class MainWindow extends JFrame {
 
 
 
-    private JPanel createAccountPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+private JPanel createAccountPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    panel.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+
+    // Title with better spacing and typography
+    JLabel titleLabel = new JLabel("Account Information");
+    titleLabel.setForeground(isDarkMode ? new Color(243, 244, 246) : new Color(17, 24, 39));
+    titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+    titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    titleLabel.setBorder(new EmptyBorder(20, 0, 40, 0));
+    panel.add(titleLabel, BorderLayout.NORTH);
+
+    // Main content wrapper with card-like appearance
+    JPanel cardPanel = new JPanel(new BorderLayout());
+    cardPanel.setBackground(isDarkMode ? new Color(31, 41, 55) : Color.WHITE);
+    cardPanel.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(isDarkMode ? darkBorderColor : lightBorderColor, 1),
+        new EmptyBorder(40, 40, 40, 40)
+    ));
+
+    JPanel formPanel = new JPanel(new GridBagLayout());
+    formPanel.setBackground(isDarkMode ? new Color(31, 41, 55) : Color.WHITE);
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.insets = new Insets(0, 0, 24, 0);
+    gbc.anchor = GridBagConstraints.NORTHWEST;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+
+    String[] labels = {"Username", "Email Address", "Full Name"};
+    String[] placeholders = {"Enter your username", "Enter your email address", "Enter your full name"};
+    JTextField[] fields = new JTextField[labels.length];
+
+    for (int i = 0; i < labels.length; i++) {
+        // Label styling
+        gbc.gridx = 0;
+        gbc.gridy = i * 2;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        JLabel label = new JLabel(labels[i]);
+        label.setForeground(isDarkMode ? new Color(209, 213, 219) : new Color(55, 65, 81));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        label.setBorder(new EmptyBorder(0, 0, 8, 0));
+        formPanel.add(label, gbc);
+
+        // Text field styling
+        gbc.gridx = 0;
+        gbc.gridy = i * 2 + 1;
+        gbc.weightx = 1.0;
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(400, 44));
+        textField.setBackground(isDarkMode ? new Color(17, 24, 39) : new Color(249, 250, 251));
+        textField.setForeground(isDarkMode ? new Color(243, 244, 246) : new Color(17, 24, 39));
+        textField.setCaretColor(isDarkMode ? new Color(243, 244, 246) : new Color(17, 24, 39));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(isDarkMode ? new Color(75, 85, 99) : new Color(209, 213, 219), 1),
+            new EmptyBorder(12, 16, 12, 16)
+        ));
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
-        JLabel titleLabel = new JLabel("Account Settings", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+        // Add focus border effect
+        textField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(accentColor, 2),
+                    new EmptyBorder(11, 15, 11, 15)
+                ));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(isDarkMode ? new Color(75, 85, 99) : new Color(209, 213, 219), 1),
+                    new EmptyBorder(12, 16, 12, 16)
+                ));
+            }
+        });
         
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.WEST;
-        
-        // Add some form elements as example
-        gbc.gridx = 0; gbc.gridy = 0;
-        formPanel.add(new JLabel("Username:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JLabel(currentUser.getUsername()), gbc);
-        
-        panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(formPanel, BorderLayout.WEST);
-        
-        return panel;
+        addPlaceholder(textField, placeholders[i]);
+        formPanel.add(textField, gbc);
+        fields[i] = textField;
     }
 
+    cardPanel.add(formPanel, BorderLayout.CENTER);
+    
+    // Wrapper for card with proper margins
+    JPanel wrapperPanel = new JPanel(new BorderLayout());
+    wrapperPanel.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+    wrapperPanel.setBorder(new EmptyBorder(0, 60, 60, 60));
+    wrapperPanel.add(cardPanel, BorderLayout.CENTER);
+    
+    panel.add(wrapperPanel, BorderLayout.CENTER);
+    return panel;
+}
+//
+private void addPlaceholder(JTextField textField, String placeholder) {
+    Font normalFont = new Font("Segoe UI", Font.PLAIN, 14);
+    Color placeholderColor = isDarkMode ? new Color(107, 114, 128) : new Color(156, 163, 175);
+    Color normalColor = isDarkMode ? new Color(243, 244, 246) : new Color(17, 24, 39);
+
+    textField.setForeground(placeholderColor);
+    textField.setText(placeholder);
+
+    textField.addFocusListener(new FocusAdapter() {
+        @Override
+        public void focusGained(FocusEvent e) {
+            if (textField.getText().equals(placeholder)) {
+                textField.setText("");
+                textField.setForeground(normalColor);
+            }
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (textField.getText().trim().isEmpty()) {
+                textField.setForeground(placeholderColor);
+                textField.setText(placeholder);
+            }
+        }
+    });
+}
     private JPanel createAddAppliancesPanel() {
     JPanel panel = new JPanel(new BorderLayout());
     
@@ -537,27 +699,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void updateComponentColors() {
-        // Update sidebar
-        sidebar.setBackground(isDarkMode ? darkSidebarBg : lightSidebarBg);
-        
-        // Update main content
-        mainContent.setBackground(isDarkMode ? darkMainBg : lightMainBg);
-        
-        // Update top bar
-        topBar.setBackground(isDarkMode ? darkMainBg : lightMainBg);
-    }
-    
-    private void updateSidebarButtonColors() {
-        // Reset foreground colors for all sidebar buttons after theme change
-        Component[] components = sidebar.getComponents();
-        for (Component comp : components) {
-            if (comp instanceof JPanel) {
-                resetButtonColorsInPanel((JPanel) comp);
-            }
-        }
-    }
-    
+  
     private void resetButtonColorsInPanel(JPanel panel) {
         for (Component comp : panel.getComponents()) {
             if (comp instanceof JButton && comp != selectedButton) {
