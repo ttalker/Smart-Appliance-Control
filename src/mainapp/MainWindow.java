@@ -1,5 +1,6 @@
 package mainapp;
 
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +14,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
 
+import mainapp.applianceClass.*;
+
 public class MainWindow extends JFrame {
     private boolean isDarkMode = false;
     private JPanel sidebar;
@@ -22,6 +25,7 @@ public class MainWindow extends JFrame {
     private JButton selectedButton = null;
     private Map<String, JPanel> panels;
     private CardLayout cardLayout;
+    
     
     // Colors for theming
     private Color lightSidebarBg = new Color(248, 249, 250);
@@ -273,36 +277,49 @@ public class MainWindow extends JFrame {
 
 
 
-    // Default panel creators - you can customize these or add your own content
+    // Default panel creators 
+   
     private JPanel createHomePanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        
+
         JLabel titleLabel = new JLabel("Current Appliances", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
+
+        // Appliance container panel (list inside scroll pane)
+        JPanel applianceListPanel = new JPanel();
+        applianceListPanel.setLayout(new BoxLayout(applianceListPanel, BoxLayout.Y_AXIS));
+        applianceListPanel.setOpaque(false);
+
+        // Add many appliances
+        String[] appliances = {
+            "AC", "Light", "Plug", "Door Cam",
+            "Door Lock", "Fridge", "Laundry Washer", "Air Purifier",
+            "Hello", "Hello", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+        };
+
+        for (String name : appliances) {
+            JPanel itemPanel = new JPanel(new BorderLayout());
+            itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            itemPanel.add(new JLabel(name), BorderLayout.WEST);
+            applianceListPanel.add(itemPanel);
+        }
+
         
-        JTextArea contentArea = new JTextArea();
-        contentArea.setText("This is the home panel. You can customize this content as needed.\n\n" +
-                           "Features of this modern interface:\n" +
-                           "• Clean, modern design\n" +
-                           "• Dark/Light theme toggle\n" +
-                           "• Smooth hover effects\n" +
-                           "• Customizable panels\n" +
-                           "• Responsive layout");
-        contentArea.setEditable(false);
-        contentArea.setOpaque(false);
-        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        contentArea.setLineWrap(true);
-        contentArea.setWrapStyleWord(true);
-        
-        JScrollPane scrollPane = new JScrollPane(contentArea);
-        scrollPane.setBorder(null);
-        scrollPane.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(applianceListPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         scrollPane.getViewport().setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.setBorder(null);
+
         
+        applianceListPanel.setPreferredSize(new Dimension(300, appliances.length * 40));
+
         panel.add(titleLabel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
-        
+
         return panel;
     }
 
@@ -323,20 +340,10 @@ public class MainWindow extends JFrame {
         gbc.gridx = 0; gbc.gridy = 0;
         formPanel.add(new JLabel("Username:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 1;
-        formPanel.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 2;
-        formPanel.add(new JLabel("Full Name:"), gbc);
-        gbc.gridx = 1;
-        formPanel.add(new JTextField(20), gbc);
+        formPanel.add(new JLabel(currentUser.getUsername()), gbc);
         
         panel.add(titleLabel, BorderLayout.NORTH);
-        panel.add(formPanel, BorderLayout.CENTER);
+        panel.add(formPanel, BorderLayout.WEST);
         
         return panel;
     }
