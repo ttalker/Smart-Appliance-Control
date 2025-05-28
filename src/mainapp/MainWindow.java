@@ -45,6 +45,7 @@ public class MainWindow extends JFrame {
 
     private ApplianceManager manager; 
     private List<JPanel> appliancePanels = new ArrayList<>();
+    private JPanel applianceListPanel;
 
 
     // userinfo
@@ -295,23 +296,12 @@ public class MainWindow extends JFrame {
         titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
 
         // Appliance container panel (list inside scroll pane)
-        JPanel applianceListPanel = new JPanel();
+        applianceListPanel = new JPanel();
         applianceListPanel.setLayout(new BoxLayout(applianceListPanel, BoxLayout.Y_AXIS));
         applianceListPanel.setOpaque(false);
 
         // Add many appliances
-        String[] appliances = {
-            "AC", "Light", "Plug", "Door Cam",
-            "Door Lock", "Fridge", "Laundry Washer", "Air Purifier",
-            "Hello", "Hello", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-        };
-
-        for (String name : appliances) {
-            JPanel itemPanel = new JPanel(new BorderLayout());
-            itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            itemPanel.add(new JLabel(name), BorderLayout.WEST);
-            applianceListPanel.add(itemPanel);
-        }
+        loadAllAppliances();
 
         
         JScrollPane scrollPane = new JScrollPane(applianceListPanel);
@@ -323,7 +313,7 @@ public class MainWindow extends JFrame {
         scrollPane.setBorder(null);
 
         
-        applianceListPanel.setPreferredSize(new Dimension(300, appliances.length * 40));
+        applianceListPanel.setPreferredSize(new Dimension(300, 80));
 
         panel.add(titleLabel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -383,25 +373,22 @@ public class MainWindow extends JFrame {
     private JPanel makeAppliancePanel(){
         String currentAppliance = applianceComboBox.getSelectedItem().toString().trim();
         String location = locationField.getText().trim();
+
+        manager = new ApplianceManager();
+
         // the returned panel
         JPanel newAppliance = new JPanel();
 
         SmartAppliance appliance;
 
-        //access and create custom control UI for each smart appliance
-        JPanel customControlsPanel = (JPanel) newAppliance.getClientProperty("customControls");
-
-        // create a appliance panel based on the smart appliance
-            appliance = new SmartAC(location + currentAppliance);
-            manager.addAppliance(appliance);
-            newAppliance = makeApplianceTemplate(location, currentAppliance);
-
         switch (currentAppliance){
             case "AC":
-                
+                appliance = new SmartAC(location + currentAppliance);
+                manager.addAppliance(appliance);
+                newAppliance = makeApplianceTemplate(location, currentAppliance);
                 JLabel nameLabel = new JLabel("test");
+                JPanel customControlsPanel = (JPanel) newAppliance.getClientProperty("customControls");
                 customControlsPanel.add(nameLabel,BorderLayout.WEST);
-
             case "Light":
                 
             case "Plug":
@@ -420,10 +407,19 @@ public class MainWindow extends JFrame {
         return newAppliance;
     }
 
-    private void loadAllAppliances(){
+    private void loadAllAppliances() {
+        if (appliancePanels == null || appliancePanels.isEmpty()) {
+            return; // Nothing to load
+        }
 
+        applianceListPanel.removeAll(); // Clear existing panels
 
+        for (JPanel panel : appliancePanels) {
+            applianceListPanel.add(panel);
+        }
 
+        applianceListPanel.revalidate(); // Refresh layout
+        applianceListPanel.repaint();   // Redraw UI
     }
 
 
@@ -496,8 +492,12 @@ public class MainWindow extends JFrame {
     addApplianceButton.putClientProperty("Button.arc", 15);
     formPanel.add(addApplianceButton, gbc);
     
+    // buttonl listener
     addApplianceButton.addActionListener(e ->{
-        makeAppliancePanel();
+        JPanel appliance = makeAppliancePanel();
+        appliancePanels.add(appliance);
+        JOptionPane.showMessageDialog(panel, "Successfully added appliance to home panel!");
+        loadAllAppliances();
     });
 
     panel.add(titleLabel, BorderLayout.NORTH);
