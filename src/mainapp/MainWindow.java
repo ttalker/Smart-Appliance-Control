@@ -4,6 +4,7 @@ package mainapp;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -13,6 +14,9 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
 import com.formdev.flatlaf.intellijthemes.FlatLightFlatIJTheme;
+
+import java.util.List;
+import java.util.ArrayList;
 
 import mainapp.applianceClass.*;
 
@@ -40,6 +44,8 @@ public class MainWindow extends JFrame {
     private JButton addApplianceButton; 
 
     private ApplianceManager manager; 
+    private List<JPanel> appliancePanels = new ArrayList<>();
+
 
     // userinfo
     private LoginInfo currentUser;
@@ -490,6 +496,10 @@ public class MainWindow extends JFrame {
     addApplianceButton.putClientProperty("Button.arc", 15);
     formPanel.add(addApplianceButton, gbc);
     
+    addApplianceButton.addActionListener(e ->{
+        makeAppliancePanel();
+    });
+
     panel.add(titleLabel, BorderLayout.NORTH);
     panel.add(formPanel, BorderLayout.CENTER);
     
