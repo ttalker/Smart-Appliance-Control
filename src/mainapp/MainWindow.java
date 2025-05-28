@@ -330,7 +330,7 @@ public class MainWindow extends JFrame {
         appliancePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // make it stretch horizontally
 
         // Left: Appliance label
-        JLabel nameLabel = new JLabel(location + " " + applianceType);
+        JLabel nameLabel = new JLabel(applianceType+ " " + location);
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         appliancePanel.add(nameLabel, BorderLayout.WEST);
 
@@ -346,7 +346,7 @@ public class MainWindow extends JFrame {
         appliancePanel.add(buttonPanel, BorderLayout.EAST);
 
         // CENTER: Placeholder panel for specific controls later
-        JPanel customControlsPanel = new JPanel();
+        JPanel customControlsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         customControlsPanel.setOpaque(false);
         appliancePanel.add(customControlsPanel, BorderLayout.CENTER);
 
@@ -361,9 +361,20 @@ public class MainWindow extends JFrame {
             }
         });
 
-        deleteButton.addActionListener(e -> {
-            // You can handle deletion in the calling code
-            JOptionPane.showMessageDialog(appliancePanel, "Delete clicked for " + applianceType);
+         deleteButton.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                appliancePanel,
+                "Are you sure you want to delete this appliance?",
+                "Confirm Deletion",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                appliancePanels.remove(appliancePanel);
+                applianceListPanel.remove(appliancePanel);
+                applianceListPanel.revalidate();
+                applianceListPanel.repaint();
+            }
         });
 
         return appliancePanel;
