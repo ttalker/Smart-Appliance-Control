@@ -327,7 +327,7 @@ public class MainWindow extends JFrame {
         // Main horizontal panel
         JPanel appliancePanel = new JPanel(new BorderLayout());
         appliancePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        appliancePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60)); // make it stretch horizontally
+        appliancePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80)); // make it stretch horizontally
 
         // Left: Appliance label
         JLabel nameLabel = new JLabel(applianceType+ " " + location);
@@ -394,12 +394,42 @@ public class MainWindow extends JFrame {
 
         switch (currentAppliance){
             case "AC":
-                appliance = new SmartAC(location + currentAppliance);
-                manager.addAppliance(appliance);
+                SmartAC ac = new SmartAC(location + " " + currentAppliance);
+                manager.addAppliance(ac);
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
-                JLabel nameLabel = new JLabel("test");
                 JPanel customControlsPanel = (JPanel) newAppliance.getClientProperty("customControls");
-                customControlsPanel.add(nameLabel,BorderLayout.WEST);
+                customControlsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+
+                // Temperature control
+                JSlider tempSlider = new JSlider(16, 30, ac.getTemperature());
+                tempSlider.setMajorTickSpacing(2);
+                tempSlider.setPaintTicks(true);
+                tempSlider.setPaintLabels(true);
+                tempSlider.addChangeListener(e -> ac.setTemperature(tempSlider.getValue()));
+
+                // Mode control
+                String[] modes = {"cool", "fan"};
+                JComboBox<String> modeSelector = new JComboBox<>(modes);
+                modeSelector.setSelectedItem(ac.getMode());
+                modeSelector.addActionListener(e -> ac.setMode((String) modeSelector.getSelectedItem()));
+
+                // Energy Saver toggle
+                JCheckBox energySaverToggle = new JCheckBox("Energy Saver");
+                energySaverToggle.setSelected(ac.isEnergySavingMode());
+                energySaverToggle.addActionListener(e -> {
+                    if (energySaverToggle.isSelected()) {
+                        ac.enableEnergySavingMode();
+                    } else {
+                        ac.disableEnergySavingMode();
+                    }
+                });
+
+                customControlsPanel.add(new JLabel("Temp:"));
+                customControlsPanel.add(tempSlider);
+                customControlsPanel.add(new JLabel("Mode:"));
+                customControlsPanel.add(modeSelector);
+                customControlsPanel.add(energySaverToggle);
+                break;
             case "Light":
                 
             case "Plug":
