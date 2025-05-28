@@ -578,8 +578,11 @@ public class MainWindow extends JFrame {
     addApplianceButton.addActionListener(e ->{
         JPanel appliance = makeAppliancePanel(null);
         appliancePanels.add(appliance);
+        applianceListPanel.add(appliance);
+        applianceListPanel.revalidate();
+        applianceListPanel.repaint();
         JOptionPane.showMessageDialog(panel, "Successfully added appliance to home panel!");
-        loadAllAppliances();
+        
     });
 
     panel.add(titleLabel, BorderLayout.NORTH);

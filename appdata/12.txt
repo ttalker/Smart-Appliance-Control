@@ -1,2 +1,3 @@
 AC|bed AC|isOn=true|temperature=24|mode=cool|energySaver=false
 AC|bed 2 AC|isOn=true|temperature=24|mode=cool|energySaver=false
+AC|kitchen AC|isOn=true|temperature=29|mode=cool|energySaver=true
