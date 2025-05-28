@@ -4,6 +4,7 @@ package mainapp;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +44,8 @@ public class MainWindow extends JFrame {
     private JComboBox<String> applianceComboBox;
     private JButton addApplianceButton; 
 
-    private ApplianceManager manager; 
+    private final FileStorage storage;
+    private final ApplianceManager manager;
     private List<JPanel> appliancePanels = new ArrayList<>();
     private JPanel applianceListPanel;
 
@@ -52,15 +54,20 @@ public class MainWindow extends JFrame {
     private LoginInfo currentUser;
 
 
-    public MainWindow(LoginInfo currentUser) {
+    public MainWindow(LoginInfo currentUser) throws IOException {
         this.currentUser = currentUser;
+        this.manager = new ApplianceManager();
+        this.storage = new FileStorage(currentUser.getUsername());
         initializeComponents();
         setupLayout();
         applyTheme();
         setVisible(true);
+
+        
+
     }
 
-    private void initializeComponents() {
+    private void initializeComponents() throws IOException {
         setTitle("Smart Appliances Control App");
         setSize(1200, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -192,6 +199,11 @@ public class MainWindow extends JFrame {
                 JOptionPane.QUESTION_MESSAGE
             );
             if (result == JOptionPane.YES_OPTION) {
+                try {
+                    storage.saveAll(manager.getAppliances());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 System.exit(0);
             }
         });
@@ -288,7 +300,7 @@ public class MainWindow extends JFrame {
 
     // Default panel creators 
    
-    private JPanel createHomePanel() {
+    private JPanel createHomePanel() throws IOException {
         JPanel panel = new JPanel(new BorderLayout());
 
         JLabel titleLabel = new JLabel("Current Appliances", SwingConstants.CENTER);
@@ -301,7 +313,18 @@ public class MainWindow extends JFrame {
         applianceListPanel.setOpaque(false);
 
         // Add many appliances
-        loadAllAppliances();
+        
+        FileStorage storage = new FileStorage(currentUser.getUsername());
+        List<SmartAppliance> loaded = storage.loadAll();
+
+        for (SmartAppliance a : loaded) {
+            manager.addAppliance(a);
+            JPanel newPanel = makeAppliancePanel(a); // Generate the UI panel for the appliance
+            applianceListPanel.add(newPanel);       // Add the panel to the list panel
+        }
+
+        applianceListPanel.revalidate();
+        applianceListPanel.repaint();
 
         
         JScrollPane scrollPane = new JScrollPane(applianceListPanel);
@@ -352,14 +375,6 @@ public class MainWindow extends JFrame {
 
         appliancePanel.putClientProperty("customControls", customControlsPanel);
 
-        // Optional: add action listener logic
-        toggleButton.addActionListener(e -> {
-            if (toggleButton.getText().equals("On")) {
-                toggleButton.setText("Off");
-            } else {
-                toggleButton.setText("On");
-            }
-        });
 
          deleteButton.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(
@@ -381,39 +396,67 @@ public class MainWindow extends JFrame {
     }
 
 
-    private JPanel makeAppliancePanel(){
-        String currentAppliance = applianceComboBox.getSelectedItem().toString().trim();
-        String location = locationField.getText().trim();
+    private JPanel makeAppliancePanel(SmartAppliance appliance) {
+        String currentAppliance;
+        String location;
 
-        manager = new ApplianceManager();
+        // Determine appliance type and location
+        if (appliance == null) {
+            currentAppliance = applianceComboBox.getSelectedItem().toString().trim();
+            location = locationField.getText().trim();
+        } else {
+            currentAppliance = appliance.getClass().getSimpleName().replace("Smart", ""); // e.g., SmartAC -> AC
+            location = appliance.getName().replace(" " + currentAppliance, "");
+        }
 
-        // the returned panel
         JPanel newAppliance = new JPanel();
 
-        SmartAppliance appliance;
-
-        switch (currentAppliance){
+        switch (currentAppliance) {
             case "AC":
-                SmartAC ac = new SmartAC(location + " " + currentAppliance);
-                manager.addAppliance(ac);
+                SmartAC ac;
+                if (appliance == null) {
+                    ac = new SmartAC(location + " AC");
+                    manager.addAppliance(ac);
+                } else {
+                    ac = (SmartAC) appliance;
+                }
+
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+
+                JPanel buttonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
+                JButton toggleButton = (JButton) buttonPanel.getComponent(0); 
+
+                toggleButton.setText(ac.isOn() ? "On" : "Off");
+                System.out.println("Toggle clicked. isOn? " + ac.isOn());
+                toggleButton.addActionListener(e -> {
+                    if (ac.isOn()) {
+                        ac.turnOff();
+                        toggleButton.setText("Off");
+                        
+                    } else {
+                        ac.turnOn();
+                        toggleButton.setText("On");
+                        
+                    }
+                });
+
                 JPanel customControlsPanel = (JPanel) newAppliance.getClientProperty("customControls");
                 customControlsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
-
-                // Temperature control
+                
+                // Temperature slider
                 JSlider tempSlider = new JSlider(16, 30, ac.getTemperature());
                 tempSlider.setMajorTickSpacing(2);
                 tempSlider.setPaintTicks(true);
                 tempSlider.setPaintLabels(true);
                 tempSlider.addChangeListener(e -> ac.setTemperature(tempSlider.getValue()));
 
-                // Mode control
+                // Mode selector
                 String[] modes = {"cool", "fan"};
                 JComboBox<String> modeSelector = new JComboBox<>(modes);
                 modeSelector.setSelectedItem(ac.getMode());
                 modeSelector.addActionListener(e -> ac.setMode((String) modeSelector.getSelectedItem()));
 
-                // Energy Saver toggle
+                // Energy Saver checkbox
                 JCheckBox energySaverToggle = new JCheckBox("Energy Saver");
                 energySaverToggle.setSelected(ac.isEnergySavingMode());
                 energySaverToggle.addActionListener(e -> {
@@ -430,23 +473,21 @@ public class MainWindow extends JFrame {
                 customControlsPanel.add(modeSelector);
                 customControlsPanel.add(energySaverToggle);
                 break;
+
+            
             case "Light":
-                
             case "Plug":
-                
             case "Door Cam":
-                
             case "Door Lock":
-                
             case "Fridge":
-             
             case "Laundry Washer":
-                
             case "Air Purifier":
-        
+                break;
         }
+
         return newAppliance;
     }
+
 
     private void loadAllAppliances() {
         if (appliancePanels == null || appliancePanels.isEmpty()) {
@@ -535,7 +576,7 @@ public class MainWindow extends JFrame {
     
     // buttonl listener
     addApplianceButton.addActionListener(e ->{
-        JPanel appliance = makeAppliancePanel();
+        JPanel appliance = makeAppliancePanel(null);
         appliancePanels.add(appliance);
         JOptionPane.showMessageDialog(panel, "Successfully added appliance to home panel!");
         loadAllAppliances();
