@@ -2,6 +2,7 @@ package mainapp.applianceClass;
 
 public class SmartAirPurifier extends SmartAppliance {
     private String airQuality = "Good";
+    private int fanSpeed = 1;
 
     public SmartAirPurifier(String name) {
         super(name);
@@ -32,5 +33,21 @@ public class SmartAirPurifier extends SmartAppliance {
     // Getter for GUI compatibility
     public String getAirQuality() {
         return airQuality;
+    }
+
+    public int setFanSpeed(int value){
+        return fanSpeed = value;
+    }
+    
+    public int getFanSpeed(){
+        return fanSpeed;
+    }
+
+
+
+    @Override
+    public String toSaveString() {
+        return String.format("Air Purifier|%s|isOn=%b|fanSpeed=%d|airQuality=%s",
+            getName(), isOn(), getFanSpeed(), getAirQuality());
     }
 }

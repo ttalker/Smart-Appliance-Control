@@ -31,4 +31,10 @@ public class SmartSecurityLock extends SmartAppliance implements Lockable {
         System.out.println(getName() + " | Lock Status: " + (isLocked ? "Locked" : "Unlocked") +
                            " | Energy: " + getEnergyConsumption() + "W");
     }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Door Lock|%s|isLocked=%b",
+            getName(), isLocked());
+    }
 }

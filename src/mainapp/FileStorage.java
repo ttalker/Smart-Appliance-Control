@@ -99,7 +99,104 @@ public class FileStorage {
                         appliance = ac;
                         break;
 
-                    // Add more appliance types here (e.g., SmartLight, SmartWasher)
+                    case "Light":
+                        SmartLight light = new SmartLight(name);
+                        if (params.containsKey("brightness"))
+                            light.setBrightness(Integer.parseInt(params.get("brightness")));
+                        if (params.containsKey("color"))
+                            light.setColor(params.get("color"));
+                        if (params.containsKey("isOn")) {
+                            if (Boolean.parseBoolean(params.get("isOn"))) {
+                                light.turnOn();
+                            } else {
+                                light.turnOff();
+                            }
+                        }
+                        appliance = light;
+                        break;
+
+                    case "Plug":
+                        SmartPlug plug = new SmartPlug(name);
+                        if (params.containsKey("isOn")) {
+                            if (Boolean.parseBoolean(params.get("isOn"))) {
+                                plug.turnOn();
+                            } else {
+                                plug.turnOff();
+                            }
+                        }
+                        appliance = plug;
+                        break;
+
+                    case "Door Cam":
+                        SmartSecurityCam doorCam = new SmartSecurityCam(name);
+                        if (params.containsKey("alertsEnabled")) {
+                            if (Boolean.parseBoolean(params.get("alertsEnabled"))) {
+                                doorCam.enableAlerts();
+                            } else {
+                                doorCam.disableAlerts();
+                            }
+                        }
+                        if (params.containsKey("isOn")) {
+                            if (Boolean.parseBoolean(params.get("isOn"))) {
+                                doorCam.turnOn();
+                            } else {
+                                doorCam.turnOff();
+                            }
+                        }
+                        appliance = doorCam;
+                        break;
+
+                    case "Door Lock":
+                        SmartSecurityLock doorLock = new SmartSecurityLock(name);
+                        if (params.containsKey("isLocked")) {
+                            if (Boolean.parseBoolean(params.get("isLocked"))) {
+                                doorLock.lock();
+                            } else {
+                                doorLock.unlock();
+                            }
+                        }
+                        appliance = doorLock;
+                        break;
+
+                    case "Fridge":
+                        SmartRefrigerator fridge = new SmartRefrigerator(name);
+                        if (params.containsKey("temperature"))
+                            fridge.setTemperature(Integer.parseInt(params.get("temperature")));
+                        if (params.containsKey("isOn")) {
+                            if (Boolean.parseBoolean(params.get("isOn"))) {
+                                fridge.turnOn();
+                            } else {
+                                fridge.turnOff();
+                            }
+                        }
+                        appliance = fridge;
+                        break;
+
+                    case "Laundry Washer":
+                        SmartWashingMachine washer = new SmartWashingMachine(name);
+                        if (params.containsKey("cycleStatus")) {
+                            if (Boolean.parseBoolean(params.get("cycleStatus"))) {
+                                washer.startCycle();
+                            } else {
+                                washer.stopCycle();
+                            }
+                        }
+                        appliance = washer;
+                        break;
+
+                    case "Air Purifier":
+                        SmartAirPurifier airPurifier = new SmartAirPurifier(name);
+                        if (params.containsKey("fanSpeed"))
+                            airPurifier.setFanSpeed(Integer.parseInt(params.get("fanSpeed")));
+                        if (params.containsKey("isOn")) {
+                            if (Boolean.parseBoolean(params.get("isOn"))) {
+                                airPurifier.turnOn();
+                            } else {
+                                airPurifier.turnOff();
+                            }
+                        }
+                        appliance = airPurifier;
+                        break;
 
                     default:
                         System.out.println("Unknown appliance type: " + type);

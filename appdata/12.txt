@@ -1,3 +1,5 @@
-AC|bed AC|isOn=true|temperature=24|mode=cool|energySaver=false
-AC|bed 2 AC|isOn=true|temperature=24|mode=cool|energySaver=false
-AC|kitchen AC|isOn=true|temperature=29|mode=cool|energySaver=true
+AC|bed AC|isOn=true|temperature=24|mode=cool|energySaver=true
+AC|bed 2 AC|isOn=true|temperature=24|mode=cool|energySaver=true
+AC|kitchen AC|isOn=true|temperature=28|mode=cool|energySaver=true
+AC|kitched AC|isOn=false|temperature=30|mode=cool|energySaver=true
+Door Cam|bed Door Cam|isOn=false|alertsEnabled=false
