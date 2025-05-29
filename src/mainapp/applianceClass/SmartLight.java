@@ -52,6 +52,18 @@ public class SmartLight extends SmartAppliance implements AdjustableLight {
         return isOn;
     }
 
+     @Override
+    public void turnOn() {
+        isOn = true;
+    }
+
+    @Override
+    public void turnOff() {
+        isOn = false;
+
+    }
+
+
     @Override
     public String getType() {
         return "Light";
