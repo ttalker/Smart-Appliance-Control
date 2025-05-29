@@ -334,7 +334,7 @@ public class MainWindow extends JFrame {
    
     private JPanel createHomePanel() throws IOException {
     JPanel panel = new JPanel(new BorderLayout());
-
+    
     JLabel titleLabel = new JLabel("Current Appliances", SwingConstants.CENTER);
     titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
     titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
@@ -343,7 +343,7 @@ public class MainWindow extends JFrame {
     applianceListPanel = new JPanel();
     applianceListPanel.setLayout(new BoxLayout(applianceListPanel, BoxLayout.Y_AXIS));
     applianceListPanel.setOpaque(true); // Change to true for debugging
-    applianceListPanel.setBackground(Color.LIGHT_GRAY); // Add background color for debugging
+    
 
     // Load appliances
     FileStorage storage = new FileStorage(currentUser.getUsername());
@@ -1053,6 +1053,7 @@ public class MainWindow extends JFrame {
         
         // Update main content
         mainContent.setBackground(isDarkMode ? darkMainBg : lightMainBg);
+        
         
         // Update top bar
         topBar.setBackground(isDarkMode ? darkMainBg : lightMainBg);

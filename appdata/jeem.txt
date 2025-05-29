@@ -2,7 +2,7 @@ AC|bedroom AC|isOn=false|temperature=24|mode=cool|energySaver=false
 Light|bedroom Light|isOn=true|brightness=50|color=cool
 Plug|bedroom Plug|isOn=false
 Door Cam|bedroom Door Cam|isOn=true|alertsEnabled=false
-Door Lock|bedroom Door Lock|isLocked=false
+Door Lock|bedroom Door Lock|isLocked=true
 Fridge|bedroom Fridge|isOn=true|temperature=5
 Laundry Washer|bedroom Laundry Washer|isRunning=true
 Air Purifier|bedroom Air Purifier|isOn=false|fanSpeed=3|airQuality=Good
