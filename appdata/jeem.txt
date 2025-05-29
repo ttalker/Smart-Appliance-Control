@@ -1,8 +1,9 @@
-AC|bedroom AC|isOn=true|temperature=24|mode=cool|energySaver=false
-Light|bedroom Light|isOn=false|brightness=50|color=white
+AC|bedroom AC|isOn=false|temperature=24|mode=cool|energySaver=false
+Light|bedroom Light|isOn=false|brightness=50|color=cool
 Plug|bedroom Plug|isOn=false
-Door Cam|bedroom Door Cam|isOn=false|alertsEnabled=true
+Door Cam|bedroom Door Cam|isOn=true|alertsEnabled=false
 Door Lock|bedroom Door Lock|isLocked=false
-Fridge|bedroom Fridge|isOn=false|temperature=2
-Laundry Washer|bedroom Laundry Washer|isRunning=false
-Air Purifier|bedroom Air Purifier|isOn=true|fanSpeed=2|airQuality=Good
+Fridge|bedroom Fridge|isOn=true|temperature=5
+Laundry Washer|bedroom Laundry Washer|isRunning=true
+Air Purifier|bedroom Air Purifier|isOn=false|fanSpeed=3|airQuality=Good
+AC|lol AC|isOn=false|temperature=30|mode=cool|energySaver=false
