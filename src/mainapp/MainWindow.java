@@ -980,13 +980,7 @@ public class MainWindow extends JFrame {
         titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
         
         JTextArea contentArea = new JTextArea();
-        contentArea.setText("Settings Panel\n\nConfigure your application preferences here.\n\n" +
-                           "You can add various settings controls such as:\n" +
-                           "• Theme preferences\n" +
-                           "• Notification settings\n" +
-                           "• Language selection\n" +
-                           "• Privacy options\n" +
-                           "• Data management");
+        contentArea.setText("Settings Panel");
         contentArea.setEditable(false);
         contentArea.setOpaque(false);
         contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -1012,14 +1006,7 @@ public class MainWindow extends JFrame {
         titleLabel.setBorder(new EmptyBorder(0, 0, 30, 0));
         
         JTextArea contentArea = new JTextArea();
-        contentArea.setText("Additional Information\n\nThis panel can contain:\n\n" +
-                           "• Help documentation\n" +
-                           "• FAQ section\n" +
-                           "• Contact information\n" +
-                           "• Version information\n" +
-                           "• Legal notices\n" +
-                           "• Support resources\n\n" +
-                           "Customize this content based on your application's needs.");
+        contentArea.setText("Additional Information");
         contentArea.setEditable(false);
         contentArea.setOpaque(false);
         contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
