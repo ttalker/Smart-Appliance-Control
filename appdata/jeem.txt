@@ -1,4 +1,3 @@
-AC|bedroom AC|isOn=false|temperature=24|mode=cool|energySaver=false
 Light|bedroom Light|isOn=true|brightness=50|color=cool
 Plug|bedroom Plug|isOn=false
 Door Cam|bedroom Door Cam|isOn=true|alertsEnabled=false

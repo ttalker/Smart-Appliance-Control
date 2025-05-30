@@ -432,13 +432,30 @@ public class MainWindow extends JFrame {
             );
 
             if (confirm == JOptionPane.YES_OPTION) {
+                // Get the associated appliance from client property
+                SmartAppliance associatedAppliance = (SmartAppliance) appliancePanel.getClientProperty("appliance");
+                
+                // Remove from manager if appliance exists
+                if (associatedAppliance != null) {
+                    try {
+                        storage.removeAppliance(associatedAppliance);
+                        manager.removeAppliance(associatedAppliance);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(appliancePanel, 
+                            "Error removing appliance: " + ex.getMessage(), 
+                            "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                        return; // Don't remove from UI if removal from manager failed
+                    }
+                }
+                
                 appliancePanels.remove(appliancePanel);
+                
                 applianceListPanel.remove(appliancePanel);
                 applianceListPanel.revalidate();
                 applianceListPanel.repaint();
             }
         });
-
         return appliancePanel;
     }
 
@@ -508,6 +525,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", ac);
 
                 JPanel buttonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton toggleButton = (JButton) buttonPanel.getComponent(0); 
@@ -571,6 +589,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", light);
 
                 JPanel lightButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton lightToggleButton = (JButton) lightButtonPanel.getComponent(0);
@@ -622,6 +641,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", plug);
 
                 JPanel plugButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton plugToggleButton = (JButton) plugButtonPanel.getComponent(0);
@@ -648,6 +668,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", doorCam);
 
                 JPanel camButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton camToggleButton = (JButton) camButtonPanel.getComponent(0);
@@ -690,6 +711,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", doorLock);
 
                 JPanel lockButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton lockToggleButton = (JButton) lockButtonPanel.getComponent(0);
@@ -716,6 +738,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", fridge);
 
                 JPanel fridgeButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton fridgeToggleButton = (JButton) fridgeButtonPanel.getComponent(0);
@@ -757,6 +780,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", washer);
 
                 JPanel washerButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton washerToggleButton = (JButton) washerButtonPanel.getComponent(0);
@@ -786,6 +810,7 @@ public class MainWindow extends JFrame {
                 }
 
                 newAppliance = makeApplianceTemplate(location, currentAppliance);
+                newAppliance.putClientProperty("appliance", airPurifier);
 
                 JPanel purifierButtonPanel = (JPanel) ((BorderLayout) newAppliance.getLayout()).getLayoutComponent(BorderLayout.EAST);
                 JButton purifierToggleButton = (JButton) purifierButtonPanel.getComponent(0);
@@ -1080,7 +1105,7 @@ public class MainWindow extends JFrame {
         }
     }
 
-    // Utility method to create custom panels easily
+    // for scalability
     public JPanel createCustomPanel(String title, Component content) {
         JPanel panel = new JPanel(new BorderLayout());
         

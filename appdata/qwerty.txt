@@ -1,0 +1,2 @@
+AC| AC|isOn=false|temperature=30|mode=fan|energySaver=true
+Door Lock|lol Door Lock|isLocked=false
