@@ -960,6 +960,7 @@ public class MainWindow extends JFrame {
         contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         contentArea.setLineWrap(true);
         contentArea.setWrapStyleWord(true);
+        LogManager.attachLogArea(contentArea);
         
         JScrollPane scrollPane = new JScrollPane(contentArea);
         scrollPane.setBorder(null);
