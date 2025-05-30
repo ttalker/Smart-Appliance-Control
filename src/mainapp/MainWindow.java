@@ -441,7 +441,7 @@ public class MainWindow extends JFrame {
                         storage.removeAppliance(associatedAppliance);
                         manager.removeAppliance(associatedAppliance);
 
-                        LogManager.log("Successfully removed" + associatedAppliance);
+                        LogManager.log("Successfully removed " + associatedAppliance.getName() + " from user " + currentUser.getUsername());
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(appliancePanel, 
                             "Error removing appliance: " + ex.getMessage(), 
@@ -566,7 +566,9 @@ public class MainWindow extends JFrame {
                 JComboBox<String> modeSelector = new JComboBox<>(modes);
                 modeSelector.setSelectedItem(ac.getMode());
                 modeSelector.addActionListener(e -> {
-                    ac.setMode((String) modeSelector.getSelectedItem());
+                    String newMode = (String)modeSelector.getSelectedItem();
+                    ac.setMode(newMode);
+                    LogManager.log(location + " " + currentAppliance.toString().trim() + " mode set to " + newMode);
                 });
 
                 // Energy Saver checkbox
@@ -574,10 +576,13 @@ public class MainWindow extends JFrame {
                 energySaverToggle.setSelected(ac.isEnergySavingMode());
                 energySaverToggle.addActionListener(e -> {
                     if (energySaverToggle.isSelected()) {
+                       
                         ac.enableEnergySavingMode();
                     } else {
                         ac.disableEnergySavingMode();
+                        
                     }
+                    LogManager.log(location + " " + currentAppliance.toString().trim() + " Energy Saving mode set to " + energySaverToggle.isSelected());
                 });
 
                 customControlsPanel.add(new JLabel("Temp:"));
@@ -607,9 +612,11 @@ public class MainWindow extends JFrame {
                     if (light.isOn()) {
                         light.turnOff();
                         lightToggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         light.turnOn();
                         lightToggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
 
@@ -622,7 +629,11 @@ public class MainWindow extends JFrame {
                 brightnessSlider.setPaintTicks(true);
                 brightnessSlider.setPaintLabels(true);
                 brightnessSlider.addChangeListener(e -> {
-                    light.setBrightness(brightnessSlider.getValue());
+                    if (!brightnessSlider.getValueIsAdjusting()) {
+                        light.setBrightness(brightnessSlider.getValue());
+                        LogManager.log(location + " " + currentAppliance.toString().trim() +
+                                    " brightness set to " + brightnessSlider.getValue());
+                    }
                 });
 
                 // Color selector
@@ -630,7 +641,9 @@ public class MainWindow extends JFrame {
                 JComboBox<String> colorSelector = new JComboBox<>(colors);
                 colorSelector.setSelectedItem(light.getColor());
                 colorSelector.addActionListener(e -> {
-                    light.setColor((String) colorSelector.getSelectedItem());
+                    String newMode = (String) colorSelector.getSelectedItem();
+                    light.setColor(newMode);
+                    LogManager.log(location + " " + currentAppliance.toString().trim() + " mode set to " + newMode);
                 });
 
                 lightControlsPanel.add(new JLabel("Brightness:"));
@@ -659,9 +672,11 @@ public class MainWindow extends JFrame {
                     if (plug.isOn()) {
                         plug.turnOff();
                         plugToggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         plug.turnOn();
                         plugToggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
                 break;
@@ -686,9 +701,11 @@ public class MainWindow extends JFrame {
                     if (doorCam.isOn()) {
                         doorCam.turnOff();
                         camToggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         doorCam.turnOn();
                         camToggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
 
@@ -701,8 +718,10 @@ public class MainWindow extends JFrame {
                 alertsToggle.addActionListener(e -> {
                     if (alertsToggle.isSelected()) {
                         doorCam.enableAlerts();
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " alerts enabled");
                     } else {
                         doorCam.disableAlerts();
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " alerts disabled");
                     }
                 });
 
@@ -729,9 +748,11 @@ public class MainWindow extends JFrame {
                     if (doorLock.isLocked()) {
                         doorLock.unlock();
                         lockToggleButton.setText("Unlocked");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " Unlocked");
                     } else {
                         doorLock.lock();
                         lockToggleButton.setText("Locked");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " Locked");
                     }
                 });
                 break;
@@ -756,9 +777,11 @@ public class MainWindow extends JFrame {
                     if (fridge.isOn()) {
                         fridge.turnOff();
                         fridgeToggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         fridge.turnOn();
                         fridgeToggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
 
@@ -771,7 +794,12 @@ public class MainWindow extends JFrame {
                 fridgeTempSlider.setPaintTicks(true);
                 fridgeTempSlider.setPaintLabels(true);
                 fridgeTempSlider.addChangeListener(e -> {
-                    fridge.setTemperature(fridgeTempSlider.getValue());
+                    if (!fridgeTempSlider.getValueIsAdjusting()) {
+                        int temp = fridgeTempSlider.getValue();
+                        fridge.setTemperature(temp);
+                        LogManager.log(location + " " + currentAppliance.toString().trim() +
+                                    " temperature set to " + temp);
+                    }
                 });
 
                 fridgeControlsPanel.add(new JLabel("Temp:"));
@@ -798,9 +826,11 @@ public class MainWindow extends JFrame {
                     if (washer.getCycleStatus()) {
                         washer.stopCycle();
                         washerToggleButton.setText("Stopped");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " has been stopped");
                     } else {
                         washer.startCycle();
                         washerToggleButton.setText("Running");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " is now running");
                     }
                 });
 
@@ -828,9 +858,11 @@ public class MainWindow extends JFrame {
                     if (airPurifier.isOn()) {
                         airPurifier.turnOff();
                         purifierToggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         airPurifier.turnOn();
                         purifierToggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
 
@@ -846,7 +878,12 @@ public class MainWindow extends JFrame {
                 fanSpeedSlider.setPaintTicks(true);
                 fanSpeedSlider.setPaintLabels(true);
                 fanSpeedSlider.addChangeListener(e -> {
-                    airPurifier.setFanSpeed(fanSpeedSlider.getValue());
+                    if (!fanSpeedSlider.getValueIsAdjusting()) {
+                        int speed = fanSpeedSlider.getValue();
+                        airPurifier.setFanSpeed(speed);
+                        LogManager.log(location + " " + currentAppliance.toString().trim() +
+                                    " fan speed set to " + speed);
+                    }
                 });
 
                 purifierControlsPanel.add(airQualityLabel);
@@ -945,6 +982,9 @@ public class MainWindow extends JFrame {
         applianceListPanel.revalidate();
         applianceListPanel.repaint();
         JOptionPane.showMessageDialog(panel, "Successfully added appliance to home panel!");
+        String location = locationField.getText().trim();
+        String type = (String) applianceComboBox.getSelectedItem();
+        LogManager.log("Added " + type + " at " + location + " successfully.");
         
     });
 
