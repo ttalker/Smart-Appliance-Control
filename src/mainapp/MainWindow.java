@@ -440,6 +440,8 @@ public class MainWindow extends JFrame {
                     try {
                         storage.removeAppliance(associatedAppliance);
                         manager.removeAppliance(associatedAppliance);
+
+                        LogManager.log("Successfully removed" + associatedAppliance);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(appliancePanel, 
                             "Error removing appliance: " + ex.getMessage(), 
@@ -535,9 +537,11 @@ public class MainWindow extends JFrame {
                     if (ac.isOn()) {
                         ac.turnOff();
                         toggleButton.setText("Off");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned off");
                     } else {
                         ac.turnOn();
                         toggleButton.setText("On");
+                        LogManager.log(location + " " + currentAppliance.toString().trim() + " turned on");
                     }
                 });
 
@@ -550,7 +554,11 @@ public class MainWindow extends JFrame {
                 tempSlider.setPaintTicks(true);
                 tempSlider.setPaintLabels(true);
                 tempSlider.addChangeListener(e -> {
-                    ac.setTemperature(tempSlider.getValue());
+                if (!tempSlider.getValueIsAdjusting()) {
+                    int newTemp = tempSlider.getValue();
+                    ac.setTemperature(newTemp);
+                    LogManager.log(location + " " + currentAppliance.toString().trim() + " temperature set to " + newTemp);
+    }
                 });
 
                 // Mode selector
