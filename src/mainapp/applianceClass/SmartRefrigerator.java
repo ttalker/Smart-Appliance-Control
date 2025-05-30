@@ -74,4 +74,10 @@ public class SmartRefrigerator extends SmartAppliance implements TemperatureCont
     public int getTemperature() {
         return temperature;
     }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Fridge|%s|isOn=%b|temperature=%d",
+            getName(), isOn(), getTemperature());
+    }
 }

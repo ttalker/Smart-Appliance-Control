@@ -1,0 +1,7 @@
+Light|bedroom Light|isOn=true|brightness=66|color=warm
+Door Cam|bedroom Door Cam|isOn=true|alertsEnabled=false
+Door Lock|bedroom Door Lock|isLocked=true
+Fridge|bedroom Fridge|isOn=true|temperature=1
+Laundry Washer|bedroom Laundry Washer|isRunning=true
+Air Purifier|bedroom Air Purifier|isOn=false|fanSpeed=3|airQuality=Good
+AC|lol AC|isOn=false|temperature=16|mode=fan|energySaver=false

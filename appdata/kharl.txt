@@ -1,0 +1,2 @@
+AC|bed AC|isOn=true|temperature=30|mode=fan|energySaver=true
+Door Lock|front Door Lock|isLocked=true

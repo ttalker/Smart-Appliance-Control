@@ -1,0 +1,12 @@
+AC|hu AC|isOn=false|temperature=24|mode=cool|energySaver=false
+Light|hu Light|isOn=false|brightness=50|color=white
+Plug|hu Plug|isOn=false
+Door Cam|hu Door Cam|isOn=false|alertsEnabled=false
+Door Lock|hu Door Lock|isLocked=true
+Door Lock|hu Door Lock|isLocked=true
+Fridge|hu Fridge|isOn=false|temperature=4
+Laundry Washer|hu Laundry Washer|isRunning=false
+Air Purifier|hu Air Purifier|isOn=false|fanSpeed=1|airQuality=Good
+Fridge|Fridge|isOn=false|temperature=4
+Air Purifier|hu Air Purifier|isOn=false|fanSpeed=1|airQuality=Good
+AC| AC|isOn=false|temperature=24|mode=cool|energySaver=false

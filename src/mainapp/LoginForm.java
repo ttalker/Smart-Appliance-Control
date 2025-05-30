@@ -1,5 +1,8 @@
 package mainapp;
 import java.awt.*;
+import java.io.IOException;
+
+
 import javax.swing.*;
 
 public class LoginForm extends JFrame{
@@ -60,9 +63,16 @@ public class LoginForm extends JFrame{
                 JOptionPane.showMessageDialog(panel, "Logged in successfully...");
                 // call the mainwindow
                 SwingUtilities.invokeLater(() -> {
-                MainWindow window = new MainWindow(currentUser);
-                dispose();
-                window.setVisible(true);
+                MainWindow window;
+                try {
+                    window = new MainWindow(currentUser);
+                    dispose();
+                    window.setVisible(true);
+                } catch (IOException e1) {
+                    
+                    e1.printStackTrace();
+                }
+                
                 });
 
             }

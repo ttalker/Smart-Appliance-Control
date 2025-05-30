@@ -3,6 +3,7 @@ package mainapp.applianceClass;
 public class SmartLight extends SmartAppliance implements AdjustableLight {
     private int brightness; // 0 - 100
     private String color;   // e.g., "warm", "cool", "blue"
+    private boolean isOn;
 
     public SmartLight(String name) {
         super(name);
@@ -46,4 +47,32 @@ public class SmartLight extends SmartAppliance implements AdjustableLight {
     public String getColor() {
         return color;
     }
+
+    public boolean isOn() {
+        return isOn;
+    }
+
+     @Override
+    public void turnOn() {
+        isOn = true;
+    }
+
+    @Override
+    public void turnOff() {
+        isOn = false;
+
+    }
+
+
+    @Override
+    public String getType() {
+        return "Light";
+    }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Light|%s|isOn=%b|brightness=%d|color=%s",
+            getName(), isOn(), getBrightness(), getColor());
+    }
+
 }

@@ -38,4 +38,10 @@ public class SmartSecurityCam extends SmartAppliance implements AlertSystem {
                 " | Mode: " + getMode() +
                 " | Energy: " + getEnergyConsumption() + "W");
     }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Door Cam|%s|isOn=%b|alertsEnabled=%b",
+            getName(), isOn(), isAlertsEnabled());
+    }
 }

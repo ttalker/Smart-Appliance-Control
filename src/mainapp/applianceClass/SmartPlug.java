@@ -16,4 +16,10 @@ public class SmartPlug extends SmartAppliance {
         System.out.println(getName() + " is " + (isOn() ? "On" : "Off") +
                            " | Energy: " + getEnergyConsumption() + "W");
     }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Plug|%s|isOn=%b",
+            getName(), isOn());
+    }
 }

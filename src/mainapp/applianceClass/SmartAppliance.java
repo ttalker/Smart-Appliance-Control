@@ -55,4 +55,15 @@ public abstract class SmartAppliance implements Controls {
     }
 
     public abstract void displayStatus();
+
+    public String getType() {
+        // Return a unique type name for saving/loading
+        return "SmartAppliance";
+    }
+
+    public String toSaveString() {
+        // Basic format: type|name
+        return getType() + "|" + getName();
+    }
+
 }

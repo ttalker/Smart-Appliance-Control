@@ -1,33 +1,32 @@
 package mainapp.applianceClass;
 
 public class SmartWashingMachine extends SmartAppliance implements WashCycleControl {
-    private String cycleStatus; // "Idle", "Running", "Finished"
+    private boolean cycleStatus; // "Idle", "Running", "Finished"
     private int waterUsage; // in liters
 
     public SmartWashingMachine(String name) {
         super(name);
-        this.cycleStatus = "Idle";
+        this.cycleStatus = false;
         this.waterUsage = 0;
     }
 
     @Override
-    public void startCycle(String mode) {
+    public void startCycle() {
         if (!isOn()) {
             turnOn();
         }
-        cycleStatus = "Running";
-        changeMode(mode);
-        waterUsage = mode.equalsIgnoreCase("Heavy") ? 100 : 50;
+        cycleStatus = true;
+        
     }
 
     @Override
     public void stopCycle() {
-        cycleStatus = "Finished";
+        cycleStatus = false;
         turnOff();
     }
 
     @Override
-    public String getCycleStatus() {
+    public boolean getCycleStatus() {
         return cycleStatus;
     }
 
@@ -47,5 +46,11 @@ public class SmartWashingMachine extends SmartAppliance implements WashCycleCont
         System.out.println(getName() + " | Status: " + cycleStatus +
                 " | Water: " + waterUsage + "L | Mode: " + getMode() +
                 " | Energy: " + getEnergyConsumption() + "W");
+    }
+
+    @Override
+    public String toSaveString() {
+        return String.format("Laundry Washer|%s|isRunning=%b",
+            getName(), getCycleStatus());
     }
 }
